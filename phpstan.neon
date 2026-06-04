@@ -1,0 +1,15 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 6
+
+    paths:
+        - app
+        - database
+        - routes
+
+    # Laravel's framework-level dynamic magic that static analysis can't model.
+    ignoreErrors:
+
+    excludePaths:

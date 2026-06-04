@@ -1,9 +1,29 @@
+/* Source Sans 3 — must precede the Tailwind import (CSS @import ordering rule). */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
 @import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+/* Forms reset, loaded the Tailwind v4 way (no tailwind.config.js). */
+@plugin '@tailwindcss/forms';
 
+/* Scan Blade templates for class usage. */
+@source '../views';
+
+/*
+ | Design system — single source of truth (coding standard #8).
+ | Brand colors are exposed as `--color-*` so Tailwind generates matching
+ | utilities (bg-navy, text-gold, border-cyan, ...). Never hardcode hex in
+ | markup — add a token here and reference the utility instead.
+ */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
+
+    --color-navy: #02327c;     /* primary brand / headers / primary buttons */
+    --color-sidebar: #1b2227;  /* dark sidebar background */
+    --color-gold: #ffbb1c;     /* accent / highlights */
+    --color-cyan: #00c0ef;     /* info accent / links */
+    --color-green: #147a52;    /* success / positive actions */
+    --color-bg: #eceff4;       /* app page background */
+    --color-surface: #ffffff;  /* cards / panels */
+    --color-text: #333333;     /* default body text */
+    --color-input: #e8f0fd;    /* form field background */
 }

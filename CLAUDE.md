@@ -44,7 +44,7 @@ Three roles map directly to the SRS user classes: `administrator`, `department`,
 ### Scope constraints worth remembering
 
 - The system stores **descriptive metadata only**. There is no file-upload field for the thesis PDF (SRS FR-4.4). Do not add one.
-- Multi-value fields (authors, advisers, panelists, keywords) render as add/remove input boxes on the frontend and should be stored in a way that preserves order — either JSON columns or related tables.
+- Multi-value fields (authors, advisers, panelists, keywords) render as add/remove input boxes on the frontend and are stored as ordered related tables (see coding standard #7), not JSON.
 - OCR output must always be reviewable and editable before save (FR-5.3, NFR-3.3) — never auto-commit OCR text.
 - When an admin deletes a department account, the system must prompt to keep or delete that department's records (FR-2.3). Implement this as an explicit choice, not a cascade default.
 
