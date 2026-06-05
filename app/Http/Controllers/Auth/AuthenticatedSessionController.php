@@ -28,7 +28,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Department users land on their thesis workspace, not the empty dashboard.
+        $home = $request->user()?->hasRole('department')
+            ? 'department.theses.index'
+            : 'dashboard';
+
+        return redirect()->intended(route($home, absolute: false));
     }
 
     /**

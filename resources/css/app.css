@@ -23,6 +23,7 @@
     --color-gold: #ffbb1c;     /* accent / highlights */
     --color-cyan: #00c0ef;     /* info accent / links */
     --color-green: #147a52;    /* success / positive actions */
+    --color-danger: #c0392b;   /* destructive actions / validation errors */
     --color-bg: #eceff4;       /* app page background */
     --color-surface: #ffffff;  /* cards / panels */
     --color-text: #333333;     /* default body text */

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicThesisController;
+use App\Http\Controllers\User\ThesisController;
 use Illuminate\Support\Facades\Route;
 
 // Public viewer (no auth) — browse/search landing + thesis detail (FR-6.x).
@@ -9,6 +10,11 @@ Route::get('/', [PublicThesisController::class, 'index'])->name('public.thesis.i
 Route::get('/theses/{thesis}', [PublicThesisController::class, 'show'])->name('public.thesis.show');
 
 Route::get('/dashboard', function () {
+    // Department users have no use for the dashboard — send them to their theses.
+    if (auth()->user()?->hasRole('department')) {
+        return redirect()->route('department.theses.index');
+    }
+
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
@@ -17,5 +23,16 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Department thesis management — scoped to the logged-in department (FR-3.4/3.6).
+Route::middleware(['auth', 'role:department'])
+    ->prefix('department')
+    ->name('department.')
+    ->group(function () {
+        // Bare area root → the department's default page (no dead 404).
+        Route::redirect('/', '/department/theses');
+
+        Route::resource('theses', ThesisController::class)->except(['show']);
+    });
 
 require __DIR__.'/auth.php';
