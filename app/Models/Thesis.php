@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Database\Factories\ThesisFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['department_id', 'title', 'program', 'year', 'abstract', 'recommendations'])]
 class Thesis extends Model
 {
+    /** @use HasFactory<ThesisFactory> */
+    use HasFactory;
+
     // "thesis" → "theses"; Laravel would otherwise guess "thesis".
     protected $table = 'theses';
 

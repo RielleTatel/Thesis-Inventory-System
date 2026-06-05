@@ -17,8 +17,9 @@
 @theme {
     --font-sans: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
 
-    --color-navy: #02327c;     /* primary brand / headers / primary buttons */
-    --color-sidebar: #1b2227;  /* dark sidebar background */
+    --color-navy: #02327c;      /* primary brand / headers / primary buttons */
+    --color-navy-deep: #022a68; /* deeper navy — bottom of the hero gradient */
+    --color-sidebar: #1b2227;   /* dark sidebar background */
     --color-gold: #ffbb1c;     /* accent / highlights */
     --color-cyan: #00c0ef;     /* info accent / links */
     --color-green: #147a52;    /* success / positive actions */

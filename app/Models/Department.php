@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
+use Database\Factories\DepartmentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'code'])]
 class Department extends Model
 {
+    /** @use HasFactory<DepartmentFactory> */
+    use HasFactory;
+
     /**
      * Thesis records owned by this department (FR-3.4 scoping anchor).
      *
