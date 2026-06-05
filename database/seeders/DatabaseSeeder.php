@@ -43,5 +43,8 @@ class DatabaseSeeder extends Seeder
                 'department_id' => $department->id,
             ])->assignRole('department');
         }
+
+        // Sample theses (depends on the departments created above).
+        $this->call(ThesisSeeder::class);
     }
 }
