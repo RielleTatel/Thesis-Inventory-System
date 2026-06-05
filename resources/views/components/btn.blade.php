@@ -14,6 +14,7 @@
         'accent' => 'bg-gold text-text hover:bg-gold/90 focus:ring-gold',
         'success' => 'bg-green text-surface hover:bg-green/90 focus:ring-green',
         'info' => 'bg-cyan text-surface hover:bg-cyan/90 focus:ring-cyan',
+        'danger' => 'bg-danger text-surface hover:bg-danger/90 focus:ring-danger',
         'ghost' => 'bg-transparent text-navy hover:bg-input focus:ring-navy',
     ];
 

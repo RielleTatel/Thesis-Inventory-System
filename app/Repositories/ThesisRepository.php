@@ -33,6 +33,43 @@ class ThesisRepository
     }
 
     /**
+     * One department's own theses, searchable via the same shared filters
+     * (FR-3.4 scoping). Reuses applyFilters so search can't diverge (rule #5).
+     *
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, Thesis>
+     */
+    public function forDepartment(int $departmentId, array $filters = []): LengthAwarePaginator
+    {
+        $query = Thesis::query()->where('department_id', $departmentId);
+
+        return $this->applyFilters($query, $filters)
+            ->with(['authors'])
+            ->orderByDesc('updated_at')
+            ->paginate(12)
+            ->withQueryString();
+    }
+
+    /**
+     * Summary stats for a department's dashboard cards.
+     *
+     * @return array{total: int, latest_year: int|null, last_updated: string|null}
+     */
+    public function statsForDepartment(int $departmentId): array
+    {
+        $query = Thesis::query()->where('department_id', $departmentId);
+
+        $latestYear = (clone $query)->max('year');
+        $lastUpdated = (clone $query)->max('updated_at');
+
+        return [
+            'total' => (clone $query)->count(),
+            'latest_year' => $latestYear !== null ? (int) $latestYear : null,
+            'last_updated' => $lastUpdated !== null ? (string) $lastUpdated : null,
+        ];
+    }
+
+    /**
      * Apply the shared filter set to a query (reusable by other scopes/screens).
      *
      * @param  Builder<Thesis>  $query
