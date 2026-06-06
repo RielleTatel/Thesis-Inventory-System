@@ -6,6 +6,8 @@
         'cyan' => 'bg-cyan/15 text-navy',
         'gold' => 'bg-gold/20 text-navy',
         'green' => 'bg-green/15 text-green',
+        'gray' => 'bg-text/10 text-text/60',
+        'red' => 'bg-danger/15 text-danger',
     ];
     $tone = $tones[$tone] ?? $tones['cyan'];
 @endphp
