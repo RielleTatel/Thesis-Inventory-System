@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable(['department_id', 'title', 'program', 'year', 'abstract', 'recommendations'])]
 class Thesis extends Model
 {
     /** @use HasFactory<ThesisFactory> */
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     // "thesis" → "theses"; Laravel would otherwise guess "thesis".
     protected $table = 'theses';
@@ -26,6 +28,18 @@ class Thesis extends Model
         return [
             'year' => 'integer',
         ];
+    }
+
+    /**
+     * Activity logging (FR-7.2). Records created/updated/deleted with the acting
+     * user as causer; `title` is kept in the log so deleted records stay readable.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('thesis')
+            ->logOnly(['title', 'year', 'program'])
+            ->setDescriptionForEvent(fn (string $event): string => $event);
     }
 
     /**

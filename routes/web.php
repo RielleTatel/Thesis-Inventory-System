@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\DepartmentAccountController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicThesisController;
 use App\Http\Controllers\User\ThesisController;
@@ -10,9 +12,13 @@ Route::get('/', [PublicThesisController::class, 'index'])->name('public.thesis.i
 Route::get('/theses/{thesis}', [PublicThesisController::class, 'show'])->name('public.thesis.show');
 
 Route::get('/dashboard', function () {
-    // Department users have no use for the dashboard — send them to their theses.
-    if (auth()->user()?->hasRole('department')) {
+    // Each role has its own home; the bare dashboard is just a router.
+    $user = auth()->user();
+    if ($user?->hasRole('department')) {
         return redirect()->route('department.theses.index');
+    }
+    if ($user?->hasRole('administrator')) {
+        return redirect()->route('admin.accounts.index');
     }
 
     return view('dashboard');
@@ -33,6 +39,22 @@ Route::middleware(['auth', 'role:department'])
         Route::redirect('/', '/department/theses');
 
         Route::resource('theses', ThesisController::class)->except(['show']);
+    });
+
+// Administrator area — department account management + activity log (FR-2.x/7.x).
+Route::middleware(['auth', 'role:administrator'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        // Bare area root → the admin's default page (no dead 404).
+        Route::redirect('/', '/admin/accounts');
+
+        Route::resource('accounts', DepartmentAccountController::class)->except(['show']);
+        Route::patch('accounts/{account}/toggle', [DepartmentAccountController::class, 'toggle'])
+            ->name('accounts.toggle');
+
+        // Admin-only audit trail (FR-7.x).
+        Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
     });
 
 require __DIR__.'/auth.php';
