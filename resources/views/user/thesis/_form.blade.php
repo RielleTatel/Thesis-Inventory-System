@@ -5,6 +5,7 @@
     $vProgram = old('program', $thesis?->program);
     $vAbstract = old('abstract', $thesis?->abstract);
     $vRecommendations = old('recommendations', $thesis?->recommendations);
+    $vStatus = old('status', $thesis?->status ?? 'draft');
 
     $vAuthors = old('authors', $thesis?->authors->pluck('name')->all() ?? []);
     $vAdvisers = old('advisers', $thesis?->advisers->pluck('name')->all() ?? []);
@@ -88,8 +89,21 @@
         </div>
     </x-card>
 
-    <div class="mt-5 flex justify-end gap-3">
-        <x-btn href="{{ route('department.theses.index') }}" variant="ghost">Cancel</x-btn>
-        <x-btn type="submit" variant="accent">{{ $thesis ? 'Save changes' : 'Save thesis' }}</x-btn>
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2 text-sm text-text/60">
+            @if ($vStatus === 'published')
+                <x-badge tone="green">Published</x-badge>
+                <span>Visible to the public viewer.</span>
+            @else
+                <x-badge tone="gray">Draft</x-badge>
+                <span>Not visible to the public yet.</span>
+            @endif
+        </div>
+        <div class="flex gap-3">
+            <x-btn href="{{ route('department.theses.index') }}" variant="ghost">Cancel</x-btn>
+            {{-- Each button submits name="status" with its own value — browser sends the clicked one. --}}
+            <x-btn type="submit" name="status" value="draft" variant="ghost">Save as Draft</x-btn>
+            <x-btn type="submit" name="status" value="published" variant="accent">Publish</x-btn>
+        </div>
     </div>
 </form>

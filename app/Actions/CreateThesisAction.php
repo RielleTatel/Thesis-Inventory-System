@@ -26,6 +26,7 @@ class CreateThesisAction
                 'program' => $data['program'],
                 'abstract' => $data['abstract'],
                 'recommendations' => $data['recommendations'] ?? null,
+                'status' => $data['status'],
             ]);
 
             $this->syncOrderedValues($thesis, $data);

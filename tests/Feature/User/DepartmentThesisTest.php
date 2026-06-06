@@ -53,6 +53,7 @@ class DepartmentThesisTest extends TestCase
 
         $this->actingAs($this->departmentUser($a))
             ->post(route('department.theses.store'), [
+                'status' => 'published',
                 'title' => 'A Brand New Thesis',
                 'year' => 2024,
                 'program' => 'BS Computer Science',
@@ -92,6 +93,7 @@ class DepartmentThesisTest extends TestCase
 
         $this->actingAs($this->departmentUser($a))
             ->put(route('department.theses.update', $thesis), [
+                'status' => 'published',
                 'title' => 'Updated Title',
                 'year' => 2023,
                 'program' => 'BS Information Technology',
@@ -128,6 +130,7 @@ class DepartmentThesisTest extends TestCase
 
         $this->actingAs($userA)->get(route('department.theses.edit', $foreign))->assertForbidden();
         $this->actingAs($userA)->put(route('department.theses.update', $foreign), [
+            'status' => 'published',
             'title' => 'Hijacked',
             'year' => 2024,
             'program' => 'BS Computer Science',

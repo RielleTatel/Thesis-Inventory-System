@@ -44,6 +44,7 @@ class ActivityLogTest extends TestCase
         $user = $this->departmentUser($department);
 
         $this->actingAs($user)->post(route('department.theses.store'), [
+            'status' => 'published',
             'title' => 'Logged Thesis',
             'year' => 2024,
             'program' => 'BS Computer Science',
@@ -70,6 +71,7 @@ class ActivityLogTest extends TestCase
         $thesis = Thesis::factory()->create(['department_id' => $department->id]);
 
         $this->actingAs($user)->put(route('department.theses.update', $thesis), [
+            'status' => 'published',
             'title' => 'Updated Title',
             'year' => 2023,
             'program' => 'BS Information Technology',

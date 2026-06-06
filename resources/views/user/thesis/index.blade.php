@@ -15,20 +15,22 @@
         </div>
 
         {{-- Stat cards --}}
-        <div class="grid gap-4 sm:grid-cols-3 mb-6">
+        <div class="grid gap-4 sm:grid-cols-4 mb-6">
             <x-card>
                 <p class="text-xs font-bold uppercase tracking-wide text-text/50">Total records</p>
                 <p class="mt-1 text-3xl font-bold text-navy">{{ $stats['total'] }}</p>
             </x-card>
             <x-card>
-                <p class="text-xs font-bold uppercase tracking-wide text-text/50">Latest year</p>
-                <p class="mt-1 text-3xl font-bold text-gold">{{ $stats['latest_year'] ?? '—' }}</p>
+                <p class="text-xs font-bold uppercase tracking-wide text-text/50">Published</p>
+                <p class="mt-1 text-3xl font-bold text-green">{{ $stats['published'] }}</p>
             </x-card>
             <x-card>
-                <p class="text-xs font-bold uppercase tracking-wide text-text/50">Last updated</p>
-                <p class="mt-1 text-3xl font-bold text-green">
-                    {{ $stats['last_updated'] ? \Illuminate\Support\Carbon::parse($stats['last_updated'])->format('Y-m-d') : '—' }}
-                </p>
+                <p class="text-xs font-bold uppercase tracking-wide text-text/50">Drafts</p>
+                <p class="mt-1 text-3xl font-bold text-gold">{{ $stats['drafts'] }}</p>
+            </x-card>
+            <x-card>
+                <p class="text-xs font-bold uppercase tracking-wide text-text/50">Latest year</p>
+                <p class="mt-1 text-3xl font-bold text-navy">{{ $stats['latest_year'] ?? '—' }}</p>
             </x-card>
         </div>
 
@@ -54,6 +56,7 @@
                         <thead>
                             <tr class="text-left text-xs font-bold uppercase tracking-wide text-text/50 border-b border-text/10">
                                 <th class="py-3 pr-4 font-bold">Title</th>
+                                <th class="py-3 pr-4 font-bold">Status</th>
                                 <th class="py-3 pr-4 font-bold">Year</th>
                                 <th class="py-3 pr-4 font-bold">Authors</th>
                                 <th class="py-3 pr-4 font-bold">Last updated</th>
@@ -62,16 +65,59 @@
                         </thead>
                         <tbody>
                             @foreach ($theses as $thesis)
-                                <tr class="border-b border-text/10 last:border-0 align-top">
+                                <tr x-data="{ status: '{{ $thesis->status }}', busy: false }"
+                                    class="border-b border-text/10 last:border-0 align-top">
                                     <td class="py-4 pr-4 max-w-md">
                                         <a href="{{ route('department.theses.edit', $thesis) }}"
                                            class="font-semibold text-navy hover:underline">{{ $thesis->title }}</a>
+                                    </td>
+                                    <td class="py-4 pr-4 whitespace-nowrap">
+                                        <span :class="status === 'published'
+                                                ? 'bg-green/15 text-green'
+                                                : 'bg-text/10 text-text/60'"
+                                              class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold"
+                                              x-text="status === 'published' ? 'Published' : 'Draft'">
+                                        </span>
                                     </td>
                                     <td class="py-4 pr-4 text-text/70">{{ $thesis->year }}</td>
                                     <td class="py-4 pr-4 text-text/70 max-w-xs">{{ $thesis->authors->pluck('name')->join(', ') ?: '—' }}</td>
                                     <td class="py-4 pr-4 text-text/70 whitespace-nowrap">{{ $thesis->updated_at?->format('Y-m-d') }}</td>
                                     <td class="py-4 pl-4">
                                         <div class="flex items-center justify-end gap-1.5">
+                                            {{-- Toggle publish/unpublish — AJAX, no page reload --}}
+                                            <button type="button"
+                                                    :disabled="busy"
+                                                    :title="status === 'published' ? 'Unpublish (move to draft)' : 'Publish'"
+                                                    :class="status === 'published'
+                                                        ? 'text-green hover:text-danger hover:border-danger'
+                                                        : 'text-text/60 hover:text-green hover:border-green'"
+                                                    class="grid place-items-center w-8 h-8 rounded-md border border-text/10 transition disabled:opacity-40"
+                                                    @click="
+                                                        busy = true;
+                                                        fetch('{{ route('department.theses.toggle-status', $thesis) }}', {
+                                                            method: 'PATCH',
+                                                            headers: {
+                                                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                                                'Accept': 'application/json'
+                                                            }
+                                                        })
+                                                        .then(r => r.json())
+                                                        .then(data => { status = data.status; })
+                                                        .finally(() => { busy = false; })
+                                                    ">
+                                                {{-- Eye-off: currently published → click to unpublish --}}
+                                                <svg x-show="status === 'published'" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+                                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                                </svg>
+                                                {{-- Eye: currently draft → click to publish --}}
+                                                <svg x-show="status !== 'published'" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                                    <circle cx="12" cy="12" r="3"/>
+                                                </svg>
+                                            </button>
                                             <a href="{{ route('department.theses.edit', $thesis) }}"
                                                class="grid place-items-center w-8 h-8 rounded-md border border-text/10 text-text/60 hover:text-navy hover:border-navy transition"
                                                aria-label="Edit">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Actions\CreateThesisAction;
 use App\Actions\DeleteThesisAction;
+use App\Actions\ToggleThesisStatusAction;
 use App\Actions\UpdateThesisAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SearchThesisRequest;
@@ -11,6 +12,7 @@ use App\Http\Requests\StoreThesisRequest;
 use App\Http\Requests\UpdateThesisRequest;
 use App\Models\Thesis;
 use App\Repositories\ThesisRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -78,6 +80,23 @@ class ThesisController extends Controller
         return redirect()
             ->route('department.theses.index')
             ->with('status', 'Thesis updated.');
+    }
+
+    public function toggleStatus(Thesis $thesis, ToggleThesisStatusAction $action): JsonResponse|RedirectResponse
+    {
+        $this->authorize('update', $thesis);
+
+        $action->execute($thesis);
+
+        if (request()->expectsJson()) {
+            return response()->json(['status' => $thesis->status]);
+        }
+
+        $label = $thesis->isPublished() ? 'published' : 'saved as draft';
+
+        return redirect()
+            ->route('department.theses.index')
+            ->with('status', "Thesis {$label}.");
     }
 
     public function destroy(Thesis $thesis, DeleteThesisAction $action): RedirectResponse
