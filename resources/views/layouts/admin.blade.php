@@ -9,6 +9,14 @@
             Department accounts
         </x-nav-item>
 
+        <x-nav-item :href="route('admin.theses.index')" :active="request()->routeIs('admin.theses.*')">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M9 7h6M9 10h6"/>
+            </svg>
+            Thesis records
+        </x-nav-item>
+
         <x-nav-item :href="route('admin.activity-log.index')" :active="request()->routeIs('admin.activity-log.*')">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

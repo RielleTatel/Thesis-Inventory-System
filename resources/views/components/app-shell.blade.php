@@ -107,10 +107,11 @@
                     {{-- Centered content cap (design .content-wrap ≈ 1160px). --}}
                     <div class="max-w-6xl mx-auto">
                         @if (session('status'))
-                            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
-                                 class="mb-6 rounded-lg bg-green/10 border border-green/20 px-4 py-3 text-sm font-semibold text-green">
-                                {{ session('status') }}
-                            </div>
+                            <script>
+                                window.addEventListener('load', function () {
+                                    alert("{{ session('status') }}");
+                                });
+                            </script>
                         @endif
 
                         {{ $slot }}

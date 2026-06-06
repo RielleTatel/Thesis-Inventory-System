@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\ThesisFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
-#[Fillable(['department_id', 'title', 'program', 'year', 'abstract', 'recommendations'])]
+#[Fillable(['department_id', 'title', 'program', 'year', 'abstract', 'recommendations', 'status'])]
 class Thesis extends Model
 {
     /** @use HasFactory<ThesisFactory> */
@@ -38,8 +39,24 @@ class Thesis extends Model
     {
         return LogOptions::defaults()
             ->useLogName('thesis')
-            ->logOnly(['title', 'year', 'program'])
+            ->logOnly(['title', 'year', 'program', 'status'])
             ->setDescriptionForEvent(fn (string $event): string => $event);
+    }
+
+    /**
+     * Scope to records visible to the public viewer.
+     *
+     * @param  Builder<Thesis>  $query
+     * @return Builder<Thesis>
+     */
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', 'published');
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status === 'published';
     }
 
     /**

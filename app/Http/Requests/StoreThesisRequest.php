@@ -24,6 +24,7 @@ class StoreThesisRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'status' => ['required', 'in:draft,published'],
             'title' => ['required', 'string', 'max:500'],
             'year' => ['required', 'integer', 'min:1900', 'max:'.(int) date('Y')],
             'program' => ['required', 'string', 'max:255'],

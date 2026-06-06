@@ -31,6 +31,7 @@ class ThesisFactory extends Factory
             'year' => fake()->numberBetween(2018, 2025),
             'abstract' => fake()->paragraph(5),
             'recommendations' => fake()->paragraph(3),
+            'status' => 'published',
         ];
     }
 

@@ -91,18 +91,96 @@
                         <x-btn href="{{ route('public.thesis.index') }}" variant="ghost" class="self-center">Clear</x-btn>
                     @endif
 
-                    <div class="ml-auto self-center text-sm font-semibold text-text/70">
-                        {{ $theses->total() }} {{ Str::plural('result', $theses->total()) }}
+                    <div class="ml-auto flex items-center gap-3 self-center">
+                        <span class="text-sm font-semibold text-text/70">
+                            {{ $theses->total() }} {{ Str::plural('result', $theses->total()) }}
+                        </span>
+
+                        {{-- View toggle — persisted in localStorage --}}
+                        <div x-data="{
+                                view: localStorage.getItem('thesis-view') || 'card',
+                                set(v) { this.view = v; localStorage.setItem('thesis-view', v); }
+                             }"
+                             x-init="$watch('view', v => $dispatch('view-changed', v))"
+                             class="flex items-center rounded-md border border-text/15 overflow-hidden">
+                            <button type="button" @click="set('card')"
+                                    :class="view === 'card' ? 'bg-navy text-surface' : 'bg-surface text-text/50 hover:text-navy hover:bg-bg'"
+                                    class="grid place-items-center w-8 h-8 transition"
+                                    title="Card view" aria-label="Card view">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                                    <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                                </svg>
+                            </button>
+                            <button type="button" @click="set('table')"
+                                    :class="view === 'table' ? 'bg-navy text-surface' : 'bg-surface text-text/50 hover:text-navy hover:bg-bg'"
+                                    class="grid place-items-center w-8 h-8 transition"
+                                    title="Table view" aria-label="Table view">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </x-card>
 
             {{-- Results --}}
             @if ($theses->isNotEmpty())
-                <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($theses as $thesis)
-                        <x-thesis-card :thesis="$thesis" />
-                    @endforeach
+                <div x-data="{
+                        view: localStorage.getItem('thesis-view') || 'card',
+                     }"
+                     @view-changed.window="view = $event.detail">
+
+                    {{-- Card view --}}
+                    <div x-show="view === 'card'" style="display:none">
+                        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                            @foreach ($theses as $thesis)
+                                <x-thesis-card :thesis="$thesis" />
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Table view --}}
+                    <div x-show="view === 'table'" style="display:none">
+                        <x-card>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="text-left text-xs font-bold uppercase tracking-wide text-text/50 border-b border-text/10">
+                                            <th class="py-3 pr-4 font-bold">Title</th>
+                                            <th class="py-3 pr-4 font-bold">Authors</th>
+                                            <th class="py-3 pr-4 font-bold">Department</th>
+                                            <th class="py-3 pr-4 font-bold">Program</th>
+                                            <th class="py-3 font-bold">Year</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($theses as $thesis)
+                                            <tr class="border-b border-text/10 last:border-0 cursor-pointer hover:bg-bg transition"
+                                                @click="window.location = '{{ route('public.thesis.show', $thesis) }}'">
+                                                <td class="py-3 pr-4 max-w-xs">
+                                                    <span class="font-semibold text-navy leading-snug">{{ $thesis->title }}</span>
+                                                </td>
+                                                <td class="py-3 pr-4 text-text/70 max-w-[14rem]">
+                                                    {{ $thesis->authors->pluck('name')->join(', ') ?: '—' }}
+                                                </td>
+                                                <td class="py-3 pr-4 text-text/70 whitespace-nowrap">
+                                                    {{ $thesis->department->name }}
+                                                </td>
+                                                <td class="py-3 pr-4 text-text/70 whitespace-nowrap">
+                                                    {{ $thesis->program }}
+                                                </td>
+                                                <td class="py-3 text-text/70">{{ $thesis->year }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </x-card>
+                    </div>
                 </div>
 
                 <div class="mt-8">

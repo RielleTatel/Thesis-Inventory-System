@@ -36,6 +36,8 @@ class PublicThesisController extends Controller
      */
     public function show(Thesis $thesis): View
     {
+        abort_if(! $thesis->isPublished(), 404);
+
         $thesis->load(['department', 'authors', 'advisers', 'panelists', 'keywords']);
 
         return view('public.thesis.show', ['thesis' => $thesis]);
