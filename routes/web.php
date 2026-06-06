@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\DepartmentAccountController;
+use App\Http\Controllers\Admin\ThesisController as AdminThesisController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicThesisController;
 use App\Http\Controllers\User\ThesisController;
@@ -39,6 +40,8 @@ Route::middleware(['auth', 'role:department'])
         Route::redirect('/', '/department/theses');
 
         Route::resource('theses', ThesisController::class)->except(['show']);
+        Route::patch('theses/{thesis}/toggle-status', [ThesisController::class, 'toggleStatus'])
+            ->name('theses.toggle-status');
     });
 
 // Administrator area — department account management + activity log (FR-2.x/7.x).
@@ -52,6 +55,10 @@ Route::middleware(['auth', 'role:administrator'])
         Route::resource('accounts', DepartmentAccountController::class)->except(['show']);
         Route::patch('accounts/{account}/toggle', [DepartmentAccountController::class, 'toggle'])
             ->name('accounts.toggle');
+
+        // Read-only thesis overview across all departments.
+        Route::get('theses', [AdminThesisController::class, 'index'])->name('theses.index');
+        Route::get('theses/{thesis}', [AdminThesisController::class, 'show'])->name('theses.show');
 
         // Admin-only audit trail (FR-7.x).
         Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');

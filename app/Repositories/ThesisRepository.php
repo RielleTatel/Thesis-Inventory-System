@@ -17,6 +17,34 @@ use Illuminate\Support\Collection;
 class ThesisRepository
 {
     /**
+     * All theses across all departments for the admin overview — drafts + published.
+     * Admin-only; never call this from public or department contexts.
+     *
+     * Extra filters beyond the shared set: department_id, status.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return LengthAwarePaginator<int, Thesis>
+     */
+    public function allForAdmin(array $filters = []): LengthAwarePaginator
+    {
+        $query = Thesis::query();
+
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (! empty($filters['department_id'])) {
+            $query->where('department_id', (int) $filters['department_id']);
+        }
+
+        return $this->applyFilters($query, $filters)
+            ->with(['department', 'authors'])
+            ->orderByDesc('updated_at')
+            ->paginate(15)
+            ->withQueryString();
+    }
+
+    /**
      * Combined, paginated result set across ALL departments (FR-6.x).
      *
      * @param  array<string, mixed>  $filters  q, year_from, year_to, program, keyword
@@ -24,7 +52,7 @@ class ThesisRepository
      */
     public function search(array $filters = []): LengthAwarePaginator
     {
-        return $this->applyFilters(Thesis::query(), $filters)
+        return $this->applyFilters(Thesis::published(), $filters)
             ->with(['department', 'authors', 'keywords'])
             ->orderByDesc('year')
             ->orderBy('title')
@@ -53,19 +81,27 @@ class ThesisRepository
     /**
      * Summary stats for a department's dashboard cards.
      *
-     * @return array{total: int, latest_year: int|null, last_updated: string|null}
+     * @return array{total: int, published: int, drafts: int, latest_year: int|null, last_updated: string|null}
      */
     public function statsForDepartment(int $departmentId): array
     {
-        $query = Thesis::query()->where('department_id', $departmentId);
-
-        $latestYear = (clone $query)->max('year');
-        $lastUpdated = (clone $query)->max('updated_at');
+        $row = Thesis::query()
+            ->where('department_id', $departmentId)
+            ->selectRaw('
+                COUNT(*) as total,
+                SUM(status = "published") as published,
+                SUM(status = "draft") as drafts,
+                MAX(year) as latest_year,
+                MAX(updated_at) as last_updated
+            ')
+            ->first();
 
         return [
-            'total' => (clone $query)->count(),
-            'latest_year' => $latestYear !== null ? (int) $latestYear : null,
-            'last_updated' => $lastUpdated !== null ? (string) $lastUpdated : null,
+            'total' => (int) ($row->total ?? 0),
+            'published' => (int) ($row->published ?? 0),
+            'drafts' => (int) ($row->drafts ?? 0),
+            'latest_year' => $row->latest_year !== null ? (int) $row->latest_year : null,
+            'last_updated' => $row->last_updated !== null ? (string) $row->last_updated : null,
         ];
     }
 
@@ -117,7 +153,7 @@ class ThesisRepository
      */
     public function programs(): Collection
     {
-        return Thesis::query()
+        return Thesis::published()
             ->whereNotNull('program')
             ->distinct()
             ->orderBy('program')
@@ -132,6 +168,7 @@ class ThesisRepository
     public function keywords(): Collection
     {
         return ThesisKeyword::query()
+            ->whereHas('thesis', fn ($q) => $q->where('status', 'published'))
             ->distinct()
             ->orderBy('name')
             ->pluck('name');
@@ -144,7 +181,7 @@ class ThesisRepository
      */
     public function years(): Collection
     {
-        return Thesis::query()
+        return Thesis::published()
             ->whereNotNull('year')
             ->distinct()
             ->orderByDesc('year')
