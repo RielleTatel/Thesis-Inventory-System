@@ -27,7 +27,8 @@ class SearchThesisRequest extends FormRequest
             'year_from' => ['nullable', 'integer', 'min:1900', 'max:2200'],
             'year_to' => ['nullable', 'integer', 'min:1900', 'max:2200'],
             'program' => ['nullable', 'string', 'max:255'],
-            'keyword' => ['nullable', 'string', 'max:255'],
+            'keyword' => ['nullable', 'array'],
+            'keyword.*' => ['string', 'max:255'],
         ];
     }
 

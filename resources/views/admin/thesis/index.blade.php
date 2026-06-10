@@ -8,10 +8,10 @@
     <x-card>
         {{-- Filters --}}
         <form method="GET" action="{{ route('admin.theses.index') }}"
-              class="flex flex-wrap items-end gap-x-4 gap-y-3 mb-5 pb-5 border-b border-text/10">
+              class="flex flex-wrap items-end gap-4 -mx-6 px-6 mb-5 pb-5 border-b border-text/10">
 
             {{-- Search --}}
-            <div class="flex-1 min-w-52">
+            <div class="w-full sm:w-64">
                 <label class="block text-xs font-semibold text-text/60 mb-1">Search</label>
                 <div class="relative">
                     <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-text/40">
@@ -30,7 +30,7 @@
             <div>
                 <label class="block text-xs font-semibold text-text/60 mb-1">Department</label>
                 <select name="department_id" onchange="this.form.requestSubmit()"
-                        class="rounded-md border-0 bg-input text-sm text-text focus:ring-2 focus:ring-cyan">
+                        class="min-w-44 rounded-md border-0 bg-input text-sm text-text focus:ring-2 focus:ring-cyan">
                     <option value="">All departments</option>
                     @foreach ($departments as $dept)
                         <option value="{{ $dept->id }}"
@@ -45,7 +45,7 @@
             <div>
                 <label class="block text-xs font-semibold text-text/60 mb-1">Status</label>
                 <select name="status" onchange="this.form.requestSubmit()"
-                        class="rounded-md border-0 bg-input text-sm text-text focus:ring-2 focus:ring-cyan">
+                        class="min-w-36 rounded-md border-0 bg-input text-sm text-text focus:ring-2 focus:ring-cyan">
                     <option value="">All statuses</option>
                     <option value="published" {{ ($filters['status'] ?? '') === 'published' ? 'selected' : '' }}>Published</option>
                     <option value="draft"     {{ ($filters['status'] ?? '') === 'draft'     ? 'selected' : '' }}>Draft</option>

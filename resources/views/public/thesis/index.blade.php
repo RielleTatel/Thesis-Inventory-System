@@ -32,6 +32,31 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {{-- Filters --}}
             <x-card class="mb-6">
+                {{-- Keyword multi-select state is shared between the picker (in the
+                     controls row) and the active-keywords chip row below it, so the
+                     x-data scope wraps both. --}}
+                @php
+                    $selectedKeywords = array_values(array_filter(
+                        (array) ($filters['keyword'] ?? []),
+                        fn ($name) => $name !== null && $name !== '',
+                    ));
+                @endphp
+                <div x-data="{
+                        selected: @js($selectedKeywords),
+                        add(name) {
+                            if (name && ! this.selected.includes(name)) {
+                                this.selected.push(name);
+                                this.$nextTick(() => this.$root.closest('form').requestSubmit());
+                            }
+                        },
+                        remove(name) {
+                            this.selected = this.selected.filter(k => k !== name);
+                            this.$nextTick(() => this.$root.closest('form').requestSubmit());
+                        },
+                        toggle(name) {
+                            this.selected.includes(name) ? this.remove(name) : this.add(name);
+                        },
+                     }">
                 <div class="flex flex-wrap items-end gap-x-5 gap-y-4">
                     <div class="flex items-center gap-2 self-center font-bold text-sm text-text/70">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -75,16 +100,50 @@
                         </select>
                     </div>
 
-                    {{-- Keyword --}}
+                    {{-- Keywords (multi-select). The panel is rendered by <x-floating-dropdown>,
+                         which teleports it to <body> and anchors it to the trigger so the
+                         card's overflow-hidden can't clip it; it scrolls internally past
+                         16rem and flips up only when there's no room below. Selected rows show
+                         a brand-cyan tint AND a right-edge check (color + shape, never color
+                         alone); labels stay left-aligned so nothing shifts. Hidden keyword[]
+                         inputs keep the URL shareable. --}}
                     <div>
-                        <label class="block text-xs font-semibold text-text/60 mb-1">Keyword</label>
-                        <select name="keyword" onchange="this.form.requestSubmit()"
-                                class="min-w-44 rounded-md border-0 bg-input text-sm text-text focus:ring-2 focus:ring-cyan">
-                            <option value="">All keywords</option>
+                        <label class="block text-xs font-semibold text-text/60 mb-1">Keywords</label>
+
+                        <template x-for="name in selected" :key="name">
+                            <input type="hidden" name="keyword[]" :value="name">
+                        </template>
+
+                        <x-floating-dropdown align="bottom-start" width="w-64"
+                                             trigger-class="flex min-w-44 items-center justify-between gap-2 rounded-md bg-input px-3 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-cyan">
+                            <x-slot:trigger>
+                                <span class="text-text/70">Add keyword…</span>
+                                <svg class="h-4 w-4 text-text/40 transition" :class="open && 'rotate-180'"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </x-slot:trigger>
+
                             @foreach ($keywords as $keyword)
-                                <option value="{{ $keyword }}" @selected(($filters['keyword'] ?? '') === $keyword)>{{ $keyword }}</option>
+                                {{-- Selected: cyan tint + full-strength navy text + right check.
+                                     Unselected: neutral text + distinct gray hover. --}}
+                                <button type="button" role="option" @click="toggle(@js($keyword))"
+                                        :aria-selected="selected.includes(@js($keyword))"
+                                        :class="selected.includes(@js($keyword))
+                                            ? 'bg-cyan/15 text-navy font-semibold hover:bg-cyan/25'
+                                            : 'text-text hover:bg-bg'"
+                                        class="flex w-full items-center justify-between gap-3 px-3 py-1.5 text-left text-sm">
+                                    <span>{{ $keyword }}</span>
+                                    <svg x-show="selected.includes(@js($keyword))" style="display:none"
+                                         class="h-4 w-4 shrink-0 text-navy" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                         stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M20 6 9 17l-5-5"/>
+                                    </svg>
+                                </button>
                             @endforeach
-                        </select>
+                        </x-floating-dropdown>
                     </div>
 
                     @if (array_filter($filters))
@@ -124,7 +183,26 @@
                             </button>
                         </div>
                     </div>
+                </div>{{-- /controls row --}}
+
+                {{-- Active keywords — their own full-width row below the controls. --}}
+                <div class="mt-4 flex flex-wrap items-center gap-1.5" x-show="selected.length" style="display:none">
+                    <span class="text-xs font-semibold text-text/50">Active keywords:</span>
+                    <template x-for="name in selected" :key="name">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-cyan/15 py-1 pl-2.5 pr-1 text-xs font-semibold text-navy">
+                            <span x-text="name"></span>
+                            <button type="button" @click="remove(name)"
+                                    class="grid h-4 w-4 place-items-center rounded-full hover:bg-cyan/30"
+                                    :aria-label="'Remove ' + name">
+                                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M18 6 6 18M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </span>
+                    </template>
                 </div>
+                </div>{{-- /x-data wrapper --}}
             </x-card>
 
             {{-- Results --}}

@@ -140,8 +140,14 @@ class ThesisRepository
             $query->where('program', $filters['program']);
         }
 
-        if (! empty($filters['keyword'])) {
-            $query->whereHas('keywords', fn (Builder $k) => $k->where('name', $filters['keyword']));
+        // Accept one or many keywords; a thesis matches if it carries ANY of them (OR).
+        // Cast handles both the multi-select array and a bare scalar from older links.
+        $keywords = array_values(array_filter(
+            array_map('strval', (array) ($filters['keyword'] ?? [])),
+            fn (string $name): bool => $name !== '',
+        ));
+        if ($keywords !== []) {
+            $query->whereHas('keywords', fn (Builder $k) => $k->whereIn('name', $keywords));
         }
 
         return $query;
