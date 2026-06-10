@@ -72,9 +72,22 @@ class PublicThesisTest extends TestCase
         $this->makeThesis(['title' => 'Robotics Study'], keywords: ['robotics']);
         $this->makeThesis(['title' => 'Biology Study'], keywords: ['biology']);
 
-        $this->get('/?keyword=robotics')
+        $this->get('/?'.http_build_query(['keyword' => ['robotics']]))
             ->assertSee('Robotics Study')
             ->assertDontSee('Biology Study');
+    }
+
+    public function test_filter_by_multiple_keywords_matches_any(): void
+    {
+        $this->makeThesis(['title' => 'Robotics Study'], keywords: ['robotics']);
+        $this->makeThesis(['title' => 'Biology Study'], keywords: ['biology']);
+        $this->makeThesis(['title' => 'Chemistry Study'], keywords: ['chemistry']);
+
+        // Selecting two keywords returns theses carrying ANY of them (OR), not both.
+        $this->get('/?'.http_build_query(['keyword' => ['robotics', 'biology']]))
+            ->assertSee('Robotics Study')
+            ->assertSee('Biology Study')
+            ->assertDontSee('Chemistry Study');
     }
 
     public function test_filter_by_year_range(): void

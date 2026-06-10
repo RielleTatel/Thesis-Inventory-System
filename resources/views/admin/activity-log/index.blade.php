@@ -7,15 +7,18 @@
     <form method="GET" action="{{ route('admin.activity-log.index') }}" class="mt-6">
         <x-card class="mb-6">
             <div class="flex flex-wrap items-end gap-x-5 gap-y-4">
-                <div class="flex-1 min-w-56 relative">
-                    <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-text/40">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-                        </svg>
-                    </span>
-                    <input type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Search actor or affected record…"
-                           class="w-full rounded-md border-0 bg-input py-2 pl-9 pr-3 text-sm text-text placeholder:text-text/40 focus:ring-2 focus:ring-cyan">
+                <div class="flex-1 min-w-56">
+                    <label class="block text-xs font-semibold text-text/60 mb-1">Search</label>
+                    <div class="relative">
+                        <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-text/40">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                            </svg>
+                        </span>
+                        <input type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Search actor or affected record…"
+                               class="w-full rounded-md border-0 bg-input py-2 pl-9 pr-3 text-sm text-text placeholder:text-text/40 focus:ring-2 focus:ring-cyan">
+                    </div>
                 </div>
 
                 <div>
