@@ -89,11 +89,12 @@ class ThesisRepository
             ->where('department_id', $departmentId)
             ->selectRaw('
                 COUNT(*) as total,
-                SUM(status = "published") as published,
-                SUM(status = "draft") as drafts,
+                SUM(CASE WHEN status = \'published\' THEN 1 ELSE 0 END) as published,
+                SUM(CASE WHEN status = \'draft\' THEN 1 ELSE 0 END) as drafts,
                 MAX(year) as latest_year,
                 MAX(updated_at) as last_updated
             ')
+            ->toBase()
             ->first();
 
         return [
