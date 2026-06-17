@@ -61,7 +61,7 @@
             <div>
                 <div class="flex items-center justify-between gap-2 mb-1">
                     <label for="abstract" class="{{ $labelClass }} mb-0">Abstract <span class="text-danger">*</span></label>
-                    <x-scan-button />
+                    <x-ocr-scanner target="abstract" field="Abstract" />
                 </div>
                 <textarea id="abstract" name="abstract" rows="5" placeholder="Summarize the study's aims, method, and key findings…"
                           class="{{ $inputClass }}">{{ $vAbstract }}</textarea>
@@ -72,7 +72,7 @@
             <div>
                 <div class="flex items-center justify-between gap-2 mb-1">
                     <label for="recommendations" class="{{ $labelClass }} mb-0">Recommendations</label>
-                    <x-scan-button />
+                    <x-ocr-scanner target="recommendations" field="Recommendations" />
                 </div>
                 <textarea id="recommendations" name="recommendations" rows="4" placeholder="Recommendations arising from the study…"
                           class="{{ $inputClass }}">{{ $vRecommendations }}</textarea>
