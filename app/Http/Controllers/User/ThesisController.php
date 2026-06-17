@@ -59,7 +59,7 @@ class ThesisController extends Controller
 
         return redirect()
             ->route('department.theses.index')
-            ->with('status', 'Thesis added.');
+            ->with('success', 'Thesis added.');
     }
 
     public function edit(Thesis $thesis): View
@@ -79,7 +79,7 @@ class ThesisController extends Controller
 
         return redirect()
             ->route('department.theses.index')
-            ->with('status', 'Thesis updated.');
+            ->with('success', 'Thesis updated.');
     }
 
     public function toggleStatus(Thesis $thesis, ToggleThesisStatusAction $action): JsonResponse|RedirectResponse
@@ -96,7 +96,7 @@ class ThesisController extends Controller
 
         return redirect()
             ->route('department.theses.index')
-            ->with('status', "Thesis {$label}.");
+            ->with('success', "Thesis {$label}.");
     }
 
     public function destroy(Thesis $thesis, DeleteThesisAction $action): RedirectResponse
@@ -107,6 +107,6 @@ class ThesisController extends Controller
 
         return redirect()
             ->route('department.theses.index')
-            ->with('status', 'Thesis deleted.');
+            ->with('success', 'Thesis deleted.');
     }
 }

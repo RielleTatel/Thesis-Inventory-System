@@ -1,5 +1,5 @@
 <x-department-layout title="My theses">
-    <div x-data="{ confirm: null }">
+    <div>
         {{-- Page head --}}
         <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
             <x-page-heading title="My theses">
@@ -127,7 +127,13 @@
                                                 </svg>
                                             </a>
                                             <button type="button"
-                                                    @click="confirm = { action: '{{ route('department.theses.destroy', $thesis) }}', title: @js($thesis->title) }"
+                                                    @click="$dispatch('confirm', {
+                                                        action: '{{ route('department.theses.destroy', $thesis) }}',
+                                                        method: 'DELETE',
+                                                        title: 'Delete thesis record',
+                                                        message: @js('Permanently delete “'.$thesis->title.'”? This removes it from the public archive and cannot be undone.'),
+                                                        confirmLabel: 'Delete record',
+                                                    })"
                                                     class="grid place-items-center w-8 h-8 rounded-md border border-text/10 text-text/60 hover:text-danger hover:border-danger transition"
                                                     aria-label="Delete">
                                                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -159,22 +165,5 @@
             @endif
         </x-card>
 
-        {{-- Delete confirmation --}}
-        <div x-show="confirm" x-cloak @keydown.escape.window="confirm = null"
-             class="fixed inset-0 z-30 grid place-items-center bg-text/40 p-4" style="display:none">
-            <div class="bg-surface rounded-lg shadow-lg max-w-md w-full p-6" @click.outside="confirm = null">
-                <h3 class="text-lg font-semibold text-navy">Delete thesis record</h3>
-                <p class="mt-2 text-sm text-text/70 leading-relaxed">
-                    Permanently delete “<span class="font-semibold text-text" x-text="confirm?.title"></span>”?
-                    This removes it from the public archive and cannot be undone.
-                </p>
-                <form method="POST" :action="confirm?.action" class="mt-6 flex justify-end gap-3">
-                    @csrf
-                    @method('DELETE')
-                    <x-btn type="button" variant="ghost" @click="confirm = null">Cancel</x-btn>
-                    <x-btn type="submit" variant="danger">Delete record</x-btn>
-                </form>
-            </div>
-        </div>
     </div>
 </x-department-layout>

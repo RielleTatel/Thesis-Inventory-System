@@ -106,18 +106,14 @@
                 <main class="flex-1 min-w-0 px-4 sm:px-6 lg:px-8 py-8">
                     {{-- Centered content cap (design .content-wrap ≈ 1160px). --}}
                     <div class="max-w-6xl mx-auto">
-                        @if (session('status'))
-                            <script>
-                                window.addEventListener('load', function () {
-                                    alert("{{ session('status') }}");
-                                });
-                            </script>
-                        @endif
-
                         {{ $slot }}
                     </div>
                 </main>
             </div>
         </div>
+
+        {{-- Global flash toast + reusable destructive-action confirmation modal --}}
+        <x-toast />
+        <x-confirm-modal />
     </body>
 </html>
