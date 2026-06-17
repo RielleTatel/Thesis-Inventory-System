@@ -60,7 +60,7 @@ class DepartmentAccountController extends Controller
 
         return redirect()
             ->route('admin.accounts.index')
-            ->with('status', 'Department account created.');
+            ->with('success', 'Department account created.');
     }
 
     public function edit(Department $account): View
@@ -76,7 +76,7 @@ class DepartmentAccountController extends Controller
 
         return redirect()
             ->route('admin.accounts.index')
-            ->with('status', 'Department account updated.');
+            ->with('success', 'Department account updated.');
     }
 
     public function toggle(Department $account, ToggleDepartmentAccountStatusAction $action): RedirectResponse
@@ -85,7 +85,7 @@ class DepartmentAccountController extends Controller
 
         return redirect()
             ->route('admin.accounts.index')
-            ->with('status', $active ? 'Account activated.' : 'Account deactivated.');
+            ->with('success', $active ? 'Account activated.' : 'Account deactivated.');
     }
 
     public function destroy(DeleteDepartmentAccountRequest $request, Department $account, DeleteDepartmentAccountAction $action): RedirectResponse
@@ -95,7 +95,7 @@ class DepartmentAccountController extends Controller
 
         return redirect()
             ->route('admin.accounts.index')
-            ->with('status', $mode === DeleteDepartmentAccountAction::MODE_DELETE
+            ->with('success', $mode === DeleteDepartmentAccountAction::MODE_DELETE
                 ? 'Account and its records deleted.'
                 : 'Account deleted; records kept in the catalog.');
     }

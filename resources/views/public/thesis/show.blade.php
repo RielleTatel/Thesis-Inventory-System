@@ -38,17 +38,13 @@
                 {{-- Abstract --}}
                 <div class="mt-8">
                     <x-section-label :underline="true">Abstract</x-section-label>
-                    <p class="mt-3 text-base leading-relaxed text-text text-pretty">
-                        {{ $thesis->abstract ?: 'No abstract provided.' }}
-                    </p>
+                    <x-long-text class="mt-3" :text="$thesis->abstract" placeholder="No abstract provided." />
                 </div>
 
                 {{-- Recommendations --}}
                 <div class="mt-8">
                     <x-section-label :underline="true">Recommendations</x-section-label>
-                    <p class="mt-3 text-base leading-relaxed text-text text-pretty">
-                        {{ $thesis->recommendations ?: 'No recommendations provided.' }}
-                    </p>
+                    <x-long-text class="mt-3" :text="$thesis->recommendations" placeholder="No recommendations provided." />
                 </div>
 
                 {{-- Field rows --}}

@@ -8,6 +8,9 @@
 /* Scan Blade templates for class usage. */
 @source '../views';
 
+/* Hide x-cloak elements until Alpine initializes (prevents flash of modal content). */
+[x-cloak] { display: none !important; }
+
 /*
  | Design system — single source of truth (coding standard #8).
  | Brand colors are exposed as `--color-*` so Tailwind generates matching
