@@ -1,23 +1,30 @@
 @props([
-    'target',          // id of the textarea this scanner fills (e.g. "abstract")
+    'target' => null,  // id of the textarea filled in 'field' mode (e.g. "abstract")
     'field' => 'text', // human label shown in the modal (e.g. "Abstract")
+    'mode' => 'field', // 'field' (single textarea) or 'approval' (multi-field)
 ])
 
 @php
-    $modalId = 'ocr-'.$target;
-    $reviewId = $target.'-ocr-review';
+    $key = $target ?: $mode;
+    $modalId = 'ocr-'.$key;
+    $reviewId = $key.'-ocr-review';
+    $isApproval = $mode === 'approval';
+    $triggerLabel = $isApproval ? 'Scan approval page' : 'Scan from printed copy';
 @endphp
 
 {{--
     Reusable OCR scanner: a trigger button + an upload → review modal.
-    UPLOAD path only for now, accepting MULTIPLE images per field (read in order
-    and combined). Camera and QR paths plug in later by reusing the same
-    controller (addFiles + the review step) — they only add a capture method.
+    UPLOAD path only for now, accepting MULTIPLE images (read in order, combined).
+    Two modes share the same modal + OCR pipeline:
+      - field    — fills one target textarea.
+      - approval — parses a thesis approval/signature page and fills several form
+                   fields at once (parseApprovalPage), still for review.
+    Camera and QR paths plug in later by reusing the same controller (addFiles).
     OCR text is always shown for edit and never auto-committed (FR-5.3).
 --}}
-<div x-data="ocrScanner('{{ $target }}')" class="inline-block">
+<div x-data="ocrScanner('{{ $target }}', '{{ $mode }}')" class="inline-block">
     {{-- Trigger --}}
-    <x-scan-button @click="openModal()" :aria-controls="$modalId" x-bind:aria-expanded="open" />
+    <x-scan-button :label="$triggerLabel" @click="openModal()" :aria-controls="$modalId" x-bind:aria-expanded="open" />
 
     {{-- Modal (teleported to body so it overlays the whole page) --}}
     <template x-teleport="body">
@@ -41,7 +48,7 @@
                 {{-- Header --}}
                 <div class="flex items-center justify-between border-b border-text/10 px-5 py-4">
                     <h2 id="{{ $modalId }}-title" class="text-base font-semibold text-text">
-                        Scan {{ $field }} from a printed copy
+                        {{ $isApproval ? 'Scan approval / signature page' : 'Scan '.$field.' from a printed copy' }}
                     </h2>
                     <button type="button" @click="closeModal()" aria-label="Close"
                             class="rounded text-text/40 transition hover:text-text focus:outline-none focus:ring-2 focus:ring-cyan">
@@ -123,10 +130,18 @@
                         </label>
                         <textarea id="{{ $reviewId }}" x-model="text" rows="8"
                                   class="w-full rounded-md border-0 bg-input text-sm text-text placeholder:text-text/40 focus:ring-2 focus:ring-cyan"></textarea>
-                        <p class="text-xs text-text/50">
-                            Text from all images is combined in order. OCR can make mistakes — check it before
-                            using it. Nothing is saved until you select &ldquo;Use this text&rdquo;.
-                        </p>
+                        @if ($isApproval)
+                            <p class="text-xs text-text/50">
+                                Title, Authors, Program, Adviser and Panelists are pulled from this text into the
+                                form for you to review and correct. Anything not found is left blank. Nothing is
+                                saved until you submit the form.
+                            </p>
+                        @else
+                            <p class="text-xs text-text/50">
+                                Text from all images is combined in order. OCR can make mistakes — check it before
+                                using it. Nothing is saved until you select &ldquo;Use this text&rdquo;.
+                            </p>
+                        @endif
                     </div>
                 </div>
 
@@ -139,8 +154,13 @@
                     </x-btn>
                     <x-btn type="button" variant="ghost" x-show="status === 'done'" x-cloak
                            @click="reset()">Start over</x-btn>
-                    <x-btn type="button" variant="primary" x-show="status === 'done'" x-cloak
-                           @click="useText()">Use this text</x-btn>
+                    @if ($isApproval)
+                        <x-btn type="button" variant="primary" x-show="status === 'done'" x-cloak
+                               @click="applyApproval()">Fill form fields</x-btn>
+                    @else
+                        <x-btn type="button" variant="primary" x-show="status === 'done'" x-cloak
+                               @click="useText()">Use this text</x-btn>
+                    @endif
                 </div>
             </div>
         </div>

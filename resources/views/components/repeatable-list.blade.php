@@ -15,7 +15,8 @@
     $initial = $initial === [] ? [''] : $initial;
 @endphp
 
-<div x-data="{ items: @js($initial) }">
+<div x-data="{ items: @js($initial) }"
+     x-on:ocr-fill-list.window="$event.detail.name === '{{ $name }}' && (items = [...$event.detail.values])">
     <label class="block text-sm font-semibold text-text mb-1">{{ $label }}</label>
     @if ($hint)
         <p class="text-xs text-text/50 mb-2">{{ $hint }}</p>
