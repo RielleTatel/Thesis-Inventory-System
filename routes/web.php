@@ -55,6 +55,9 @@ Route::middleware(['auth', 'role:administrator'])
         Route::resource('accounts', DepartmentAccountController::class)->except(['show']);
         Route::patch('accounts/{account}/toggle', [DepartmentAccountController::class, 'toggle'])
             ->name('accounts.toggle');
+        // Admin-mediated password reset (no email infra — resets are out-of-band).
+        Route::patch('accounts/{account}/reset-password', [DepartmentAccountController::class, 'resetPassword'])
+            ->name('accounts.reset-password');
 
         // Read-only thesis overview across all departments.
         Route::get('theses', [AdminThesisController::class, 'index'])->name('theses.index');

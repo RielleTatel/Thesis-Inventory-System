@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\CreateDepartmentAccountAction;
 use App\Actions\DeleteDepartmentAccountAction;
+use App\Actions\ResetDepartmentAccountPasswordAction;
 use App\Actions\ToggleDepartmentAccountStatusAction;
 use App\Actions\UpdateDepartmentAccountAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DeleteDepartmentAccountRequest;
+use App\Http\Requests\ResetDepartmentPasswordRequest;
 use App\Http\Requests\StoreDepartmentAccountRequest;
 use App\Http\Requests\UpdateDepartmentAccountRequest;
 use App\Models\Department;
@@ -86,6 +88,27 @@ class DepartmentAccountController extends Controller
         return redirect()
             ->route('admin.accounts.index')
             ->with('success', $active ? 'Account activated.' : 'Account deactivated.');
+    }
+
+    /**
+     * Admin-mediated password reset (no email infra — the admin relays the new
+     * password out-of-band). The new password is flashed back once so it can be
+     * shown to the admin for relaying; it is never persisted in plaintext or
+     * written to the activity log.
+     */
+    public function resetPassword(ResetDepartmentPasswordRequest $request, Department $account, ResetDepartmentAccountPasswordAction $action): RedirectResponse
+    {
+        $password = (string) $request->validated()['password'];
+        $login = $action->execute($account, $password);
+
+        return redirect()
+            ->route('admin.accounts.index')
+            ->with('success', "Password reset for {$account->name}.")
+            ->with('reset_password', [
+                'name' => $account->name,
+                'email' => $login->email,
+                'password' => $password,
+            ]);
     }
 
     public function destroy(DeleteDepartmentAccountRequest $request, Department $account, DeleteDepartmentAccountAction $action): RedirectResponse

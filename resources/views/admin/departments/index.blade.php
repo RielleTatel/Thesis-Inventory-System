@@ -1,5 +1,46 @@
 <x-admin-layout title="Department accounts">
-    <div x-data="{ confirm: null }">
+    @php
+        // Reopen the reset modal with its errors if validation failed (passwords
+        // are never flashed, but the account context carries through old input).
+        $resetInitial = ($errors->has('password') && old('account_id'))
+            ? [
+                'name' => old('account_name'),
+                'email' => old('account_email'),
+                'action' => route('admin.accounts.reset-password', old('account_id')),
+            ]
+            : null;
+    @endphp
+
+    <div x-data="{ confirm: null, reset: @js($resetInitial) }">
+        {{-- Shown once after a reset so the admin can copy and relay the new
+             password out-of-band (no email infra). Persists until dismissed. --}}
+        @if ($creds = session('reset_password'))
+            <div x-data="{ show: true }" x-show="show" x-cloak
+                 class="mb-6 flex items-start gap-3 rounded-lg border-l-4 border-green bg-surface p-4 shadow-sm">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-green/10 text-green">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 6 9 17l-5-5"/>
+                    </svg>
+                </span>
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold text-text">New password for {{ $creds['name'] }}</p>
+                    <p class="mt-0.5 text-xs text-text/60">Shown once — copy it now and relay it to the department, then dismiss.</p>
+                    <div class="mt-3 flex flex-wrap items-center gap-2">
+                        <code class="select-all rounded-md bg-input px-3 py-1.5 text-sm font-semibold text-navy">{{ $creds['password'] }}</code>
+                        <span class="text-xs text-text/50">{{ $creds['email'] }}</span>
+                    </div>
+                </div>
+                <button type="button" @click="show = false" aria-label="Dismiss"
+                        class="shrink-0 rounded text-text/40 transition hover:text-text focus:outline-none focus:ring-2 focus:ring-cyan">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M18 6 6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        @endif
+
         <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
             <x-page-heading title="Department accounts">
                 Create and manage the department logins that can catalog theses.
@@ -64,6 +105,10 @@
                                             @if ($login)
                                                 <a href="{{ route('admin.accounts.edit', $account) }}"
                                                    class="rounded-md border border-text/15 bg-surface px-3 py-1.5 text-xs font-semibold text-text hover:bg-bg hover:border-text/30 transition">Edit</a>
+
+                                                <button type="button"
+                                                        @click="reset = { name: @js($account->name), email: @js($login->email), action: '{{ route('admin.accounts.reset-password', $account) }}', id: {{ $account->id }} }"
+                                                        class="rounded-md border border-text/15 bg-surface px-3 py-1.5 text-xs font-semibold text-text hover:bg-bg hover:border-text/30 transition">Reset password</button>
 
                                                 <form method="POST" action="{{ route('admin.accounts.toggle', $account) }}">
                                                     @csrf
@@ -155,6 +200,48 @@
                     <x-btn type="button" variant="ghost" @click="confirm = null">Cancel</x-btn>
                     <x-btn type="submit" name="mode" value="keep" variant="primary">Keep the records</x-btn>
                     <x-btn type="submit" name="mode" value="delete" variant="danger">Delete the records too</x-btn>
+                </form>
+            </div>
+        </div>
+
+        {{-- Admin-mediated password reset — admin sets a new password and relays it. --}}
+        <div x-show="reset" x-cloak @keydown.escape.window="reset = null"
+             class="fixed inset-0 z-30 grid place-items-center bg-text/40 p-4" style="display:none">
+            <div class="bg-surface rounded-lg shadow-lg max-w-md w-full p-6" @click.outside="reset = null">
+                <h3 class="text-lg font-semibold text-navy">Reset department password</h3>
+                <p class="mt-2 text-sm text-text/70 leading-relaxed">
+                    Set a new password for
+                    “<span class="font-semibold text-text" x-text="reset?.name"></span>”
+                    (<span x-text="reset?.email"></span>). It's shown once after saving so you can relay it to the department.
+                </p>
+
+                <form method="POST" :action="reset?.action" class="mt-5 space-y-4">
+                    @csrf
+                    @method('PATCH')
+                    {{-- Carried only so the modal can reopen with its errors on a failed reset. --}}
+                    <input type="hidden" name="account_id" :value="reset?.id">
+                    <input type="hidden" name="account_name" :value="reset?.name">
+                    <input type="hidden" name="account_email" :value="reset?.email">
+
+                    <div>
+                        <label for="reset_password" class="block text-xs font-semibold text-text/60 mb-1">New password</label>
+                        <input type="password" id="reset_password" name="password" autocomplete="new-password" required
+                               class="w-full rounded-md border-0 bg-input py-2 px-3 text-sm text-text placeholder:text-text/40 focus:ring-2 focus:ring-cyan @error('password') ring-2 ring-danger @enderror">
+                        @error('password')
+                            <p class="mt-1 text-xs font-semibold text-danger">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="reset_password_confirmation" class="block text-xs font-semibold text-text/60 mb-1">Confirm new password</label>
+                        <input type="password" id="reset_password_confirmation" name="password_confirmation" autocomplete="new-password" required
+                               class="w-full rounded-md border-0 bg-input py-2 px-3 text-sm text-text placeholder:text-text/40 focus:ring-2 focus:ring-cyan">
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-1">
+                        <x-btn type="button" variant="ghost" @click="reset = null">Cancel</x-btn>
+                        <x-btn type="submit" variant="primary">Reset password</x-btn>
+                    </div>
                 </form>
             </div>
         </div>
