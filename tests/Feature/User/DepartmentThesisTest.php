@@ -5,6 +5,7 @@ namespace Tests\Feature\User;
 use App\Models\Department;
 use App\Models\Thesis;
 use App\Models\User;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -297,6 +298,32 @@ class DepartmentThesisTest extends TestCase
 
         $this->assertDatabaseMissing('theses', ['id' => $thesis->id]);
         Storage::disk('s3')->assertMissing($path);
+    }
+
+    public function test_a_failed_upload_does_not_persist_a_path(): void
+    {
+        $a = Department::factory()->create();
+        $thesis = $this->thesisFor($a);
+
+        // Force the s3 disk to report a failed write (e.g. bad creds / network).
+        $disk = \Mockery::mock(FilesystemAdapter::class);
+        $disk->shouldReceive('putFileAs')->andReturn(false);
+        Storage::set('s3', $disk);
+
+        $this->actingAs($this->departmentUser($a))
+            ->put(route('department.theses.update', $thesis), [
+                'status' => 'published',
+                'title' => $thesis->title,
+                'year' => $thesis->year,
+                'program' => $thesis->program,
+                'abstract' => $thesis->abstract,
+                'approval_page' => UploadedFile::fake()->image('fail.jpg'),
+            ])
+            ->assertSessionHasErrors('approval_page');
+
+        $thesis->refresh();
+        $this->assertNull($thesis->approval_page_path);
+        $this->assertDatabaseMissing('theses', ['id' => $thesis->id, 'approval_page_path' => '0']);
     }
 
     public function test_non_owner_department_cannot_upload_an_approval_page(): void
