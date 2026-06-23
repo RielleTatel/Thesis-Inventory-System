@@ -1,5 +1,7 @@
 import cleanOcrText from './ocr-clean';
+import recognizeImage from './ocr-engine';
 import parseApprovalPage from './parse-approval-page';
+import preprocessImage from './preprocess-image';
 import { titleCaseAuthor, titleCaseTitle } from './text-case';
 
 /**
@@ -123,26 +125,26 @@ export default function ocrScanner(targetId, mode = 'field') {
             this.total = this.files.length;
 
             try {
-                // Lazy-load Tesseract.js so the ~MB OCR engine stays out of the
-                // main bundle until the user actually scans something.
-                const tesseract = await import('tesseract.js');
-                const recognize = tesseract.recognize ?? tesseract.default?.recognize;
-
                 const parts = [];
                 for (let i = 0; i < this.files.length; i++) {
                     this.current = i + 1;
                     this.progress = 0;
 
-                    const { data } = await recognize(this.files[i], 'eng', {
-                        logger: (m) => {
-                            if (m.status === 'recognizing text') {
-                                this.progress = Math.round((m.progress || 0) * 100);
-                            }
-                        },
+                    // Clean the image up (grayscale/contrast/threshold/upscale)
+                    // before OCR; fall back to the raw file if that ever fails.
+                    let source = this.files[i];
+                    try {
+                        source = await preprocessImage(source);
+                    } catch {
+                        source = this.files[i];
+                    }
+
+                    const text = await recognizeImage(source, (percent) => {
+                        this.progress = percent;
                     });
 
                     // Reflow each image's visual line breaks before combining.
-                    parts.push(cleanOcrText(data?.text ?? ''));
+                    parts.push(cleanOcrText(text));
                 }
 
                 // Combine in order, one line break between images.
