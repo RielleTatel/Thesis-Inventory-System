@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -57,6 +59,40 @@ class Thesis extends Model
     public function isPublished(): bool
     {
         return $this->status === 'published';
+    }
+
+    /**
+     * Whether this thesis has a stored approval/signature page image.
+     *
+     * `approval_page_path` is intentionally NOT mass-assignable — the value is a
+     * server-generated storage path set in the Action, never raw user input.
+     */
+    public function hasApprovalPage(): bool
+    {
+        return $this->approval_page_path !== null && $this->approval_page_path !== '';
+    }
+
+    /**
+     * A browser-viewable URL for the approval page, or null if none is stored.
+     * Private buckets get a short-lived signed URL; if the driver can't sign
+     * (a public bucket), fall back to the plain public URL.
+     */
+    public function approvalPageUrl(): ?string
+    {
+        $path = $this->approval_page_path;
+
+        if ($path === null || $path === '') {
+            return null;
+        }
+
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk('s3');
+
+        try {
+            return $disk->temporaryUrl($path, now()->addMinutes(30));
+        } catch (\Throwable) {
+            return $disk->url($path);
+        }
     }
 
     /**

@@ -31,6 +31,12 @@ class StoreThesisRequest extends FormRequest
             'abstract' => ['required', 'string', 'max:20000'],
             'recommendations' => ['nullable', 'string', 'max:20000'],
 
+            // Approval/signature page image — the one allowed non-metadata
+            // attachment (FR-4.4 exception). Stored on s3; see HandlesApprovalPage.
+            'approval_page' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            // When editing: tick to delete the current approval page on save.
+            'remove_approval_page' => ['nullable', 'boolean'],
+
             // Ordered multi-value fields — blanks are filtered out in the Action.
             'authors' => ['array'],
             'authors.*' => ['nullable', 'string', 'max:255'],

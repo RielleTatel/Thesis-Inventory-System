@@ -74,6 +74,9 @@
                         @endforelse
                     </x-detail-row>
 
+                    {{-- Approval/signature page backs up the Adviser/Panelists above. --}}
+                    <x-approval-page-viewer :thesis="$thesis" />
+
                     <x-detail-row label="Keywords">
                         @forelse ($thesis->keywords as $keyword)
                             <x-chip kind="keyword">{{ $keyword->name }}</x-chip>
