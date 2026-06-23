@@ -123,6 +123,26 @@ class ActivityLogTest extends TestCase
         $this->assertSame('keep', data_get($log->properties, 'records_mode'));
     }
 
+    public function test_resetting_a_password_logs_activity_without_the_password(): void
+    {
+        $admin = $this->admin();
+        $department = Department::factory()->create();
+        $this->departmentUser($department);
+
+        $this->actingAs($admin)->patch(route('admin.accounts.reset-password', $department), [
+            'password' => 'top-secret-relay',
+            'password_confirmation' => 'top-secret-relay',
+        ]);
+
+        $log = Activity::where('log_name', 'account')->where('event', 'password reset')->latest('id')->first();
+        $this->assertNotNull($log);
+        $this->assertSame($admin->id, $log->causer_id);
+        $this->assertSame($department->id, $log->subject_id);
+
+        // The password value is never written to the log (any column).
+        $this->assertStringNotContainsString('top-secret-relay', json_encode($log->getAttributes()));
+    }
+
     public function test_activity_log_page_is_admin_only(): void
     {
         $department = Department::factory()->create();

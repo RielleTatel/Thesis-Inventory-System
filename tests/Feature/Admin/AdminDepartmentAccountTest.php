@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\Thesis;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -94,6 +95,74 @@ class AdminDepartmentAccountTest extends TestCase
 
         $this->actingAs($this->admin())->patch(route('admin.accounts.toggle', $department));
         $this->assertTrue($login->fresh()->is_active);
+    }
+
+    public function test_admin_can_reset_a_department_password(): void
+    {
+        $department = $this->account(['code' => 'RST']);
+        $login = $department->users()->firstOrFail();
+
+        $this->actingAs($this->admin())
+            ->patch(route('admin.accounts.reset-password', $department), [
+                'password' => 'fresh-relay-secret',
+                'password_confirmation' => 'fresh-relay-secret',
+            ])
+            ->assertRedirect(route('admin.accounts.index'))
+            ->assertSessionHas('success');
+
+        $this->assertTrue(Hash::check('fresh-relay-secret', $login->fresh()->password));
+    }
+
+    public function test_reset_validates_password_rules_and_confirmation(): void
+    {
+        $department = $this->account(['code' => 'RST2']);
+        $original = $department->users()->firstOrFail()->password;
+
+        $this->actingAs($this->admin())
+            ->patch(route('admin.accounts.reset-password', $department), [
+                'password' => 'short',
+                'password_confirmation' => 'mismatch',
+            ])
+            ->assertSessionHasErrors('password');
+
+        // Password is left unchanged when validation fails.
+        $this->assertSame($original, $department->users()->firstOrFail()->password);
+    }
+
+    public function test_reset_leaves_role_and_active_status_untouched(): void
+    {
+        $department = $this->account(['code' => 'RST3'], active: true);
+        $login = $department->users()->firstOrFail();
+
+        $this->actingAs($this->admin())
+            ->patch(route('admin.accounts.reset-password', $department), [
+                'password' => 'another-relay-secret',
+                'password_confirmation' => 'another-relay-secret',
+            ]);
+
+        $fresh = $login->fresh();
+        $this->assertTrue($fresh->is_active);
+        $this->assertTrue($fresh->hasRole('department'));
+    }
+
+    public function test_non_admins_cannot_reset_a_department_password(): void
+    {
+        $department = $this->account();
+        $deptUser = $department->users()->firstOrFail();
+        $original = $deptUser->password;
+
+        $payload = ['password' => 'hijacked-secret', 'password_confirmation' => 'hijacked-secret'];
+
+        // Guest → login.
+        $this->patch(route('admin.accounts.reset-password', $department), $payload)
+            ->assertRedirect(route('login'));
+
+        // Department user → 403 (cannot reset even its own login this way).
+        $this->actingAs($deptUser)
+            ->patch(route('admin.accounts.reset-password', $department), $payload)
+            ->assertForbidden();
+
+        $this->assertSame($original, $department->users()->firstOrFail()->password);
     }
 
     public function test_deleting_account_keeping_records_retains_theses_and_removes_login(): void

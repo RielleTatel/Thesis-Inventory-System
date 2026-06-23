@@ -2,72 +2,34 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public function test_reset_password_link_screen_can_be_rendered(): void
+    public function test_forgot_password_shows_admin_mediated_instructions(): void
     {
         $response = $this->get('/forgot-password');
 
         $response->assertStatus(200);
+        $response->assertSee('CITS');
+        $response->assertSee('Back to sign in');
     }
 
-    public function test_reset_password_link_can_be_requested(): void
+    public function test_email_based_reset_routes_are_removed(): void
     {
-        Notification::fake();
+        // The self-service "email me a reset link" + token flow is gone — no
+        // dead endpoint remains for a system with no email infrastructure.
+        $this->assertFalse(Route::has('password.email'));
+        $this->assertFalse(Route::has('password.reset'));
+        $this->assertFalse(Route::has('password.store'));
 
-        $user = User::factory()->create();
+        // forgot-password is now a GET-only instructions page — no email handler.
+        $this->post('/forgot-password', ['email' => 'someone@univ.edu'])->assertStatus(405);
+        // The token reset-password path is gone entirely.
+        $this->post('/reset-password', [])->assertNotFound();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
-
-        Notification::assertSentTo($user, ResetPassword::class);
-    }
-
-    public function test_reset_password_screen_can_be_rendered(): void
-    {
-        Notification::fake();
-
-        $user = User::factory()->create();
-
-        $this->post('/forgot-password', ['email' => $user->email]);
-
-        Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
-            $response = $this->get('/reset-password/'.$notification->token);
-
-            $response->assertStatus(200);
-
-            return true;
-        });
-    }
-
-    public function test_password_can_be_reset_with_valid_token(): void
-    {
-        Notification::fake();
-
-        $user = User::factory()->create();
-
-        $this->post('/forgot-password', ['email' => $user->email]);
-
-        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-            $response = $this->post('/reset-password', [
-                'token' => $notification->token,
-                'email' => $user->email,
-                'password' => 'password',
-                'password_confirmation' => 'password',
-            ]);
-
-            $response
-                ->assertSessionHasNoErrors()
-                ->assertRedirect(route('login'));
-
-            return true;
-        });
+        // The instructions page the login link points to still exists.
+        $this->assertTrue(Route::has('password.request'));
     }
 }
