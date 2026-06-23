@@ -2,16 +2,18 @@
 
 namespace App\Actions;
 
+use App\Actions\Concerns\HandlesApprovalPage;
 use App\Actions\Concerns\SyncsOrderedThesisValues;
 use App\Models\Thesis;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Update a thesis's descriptive fields and its ordered multi-value rows.
+ * Update a thesis's descriptive fields, its ordered multi-value rows, and its
+ * approval-page image (replace or remove).
  */
 class UpdateThesisAction
 {
-    use SyncsOrderedThesisValues;
+    use HandlesApprovalPage, SyncsOrderedThesisValues;
 
     /**
      * @param  array<string, mixed>  $data
@@ -29,6 +31,7 @@ class UpdateThesisAction
             ]);
 
             $this->syncOrderedValues($thesis, $data);
+            $this->syncApprovalPage($thesis, $data);
 
             return $thesis;
         });

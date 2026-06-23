@@ -17,7 +17,7 @@
     $maxYear = (int) date('Y');
 @endphp
 
-<form method="POST" action="{{ $action }}">
+<form method="POST" action="{{ $action }}" enctype="multipart/form-data">
     @csrf
     @if ($method === 'PUT')
         @method('PUT')
@@ -98,6 +98,35 @@
             <x-repeatable-list name="panelists" label="Panelists" placeholder="Panelist full name" :values="$vPanelists" />
             <x-repeatable-list name="keywords" label="Keywords" hint="Used for search and filtering."
                                placeholder="Keyword or topic" :values="$vKeywords" :numbered="false" />
+
+            <hr class="border-text/10">
+
+            {{-- Approval / signature page image — the one allowed attachment
+                 (FR-4.4 exception). New upload replaces the current one; the
+                 remove toggle deletes it on save. --}}
+            <div x-data="{ remove: false }">
+                <label for="approval_page" class="{{ $labelClass }}">Approval page image</label>
+
+                @if ($thesis?->hasApprovalPage())
+                    <div x-show="!remove" class="mb-2 flex items-center gap-3 rounded-md bg-input px-3 py-2">
+                        <a href="{{ $thesis->approvalPageUrl() }}" target="_blank" rel="noopener"
+                           class="text-sm font-semibold text-cyan hover:underline">View current approval page</a>
+                        <button type="button" @click="remove = true"
+                                class="ml-auto text-xs font-semibold text-danger hover:underline">Remove</button>
+                    </div>
+                    <div x-show="remove" x-cloak class="mb-2 flex items-center gap-3 rounded-md bg-danger/10 px-3 py-2">
+                        <span class="text-xs font-semibold text-danger">Current approval page will be removed when you save.</span>
+                        <button type="button" @click="remove = false"
+                                class="ml-auto text-xs font-semibold text-text/70 hover:underline">Undo</button>
+                    </div>
+                    <input type="hidden" name="remove_approval_page" :value="remove ? 1 : 0">
+                @endif
+
+                <input type="file" id="approval_page" name="approval_page" accept="image/*"
+                       class="block w-full text-sm text-text/70 file:mr-3 file:rounded-md file:border-0 file:bg-navy file:px-3 file:py-2 file:text-sm file:font-semibold file:text-surface hover:file:bg-navy/90">
+                <p class="mt-1 text-xs text-text/50">JPG, PNG or WEBP, up to 5&nbsp;MB. A new image replaces the current one.</p>
+                @error('approval_page')<p class="mt-1 text-xs font-semibold text-danger">{{ $message }}</p>@enderror
+            </div>
         </div>
     </x-card>
 
