@@ -1,11 +1,15 @@
+import { findFuzzy } from './fuzzy-match';
+
 /**
  * Parse the OCR text of a thesis approval / signature page into structured
  * fields — best-effort, Tesseract.js text only (no AI, no API, no network).
  *
- * Anchor phrases are matched case-insensitively. Any field whose anchor isn't
- * found is returned empty: this never guesses and never throws. The caller fills
- * the form with whatever was found and the user reviews/corrects everything
- * before saving (FR-5.3 — nothing is auto-committed).
+ * Anchor phrases ("entitled", "submitted by", "in partial…", "for the degree
+ * of") are located with FUZZY matching (Levenshtein edit distance) so OCR
+ * garble like "tiled:" or "in paral lflment" still anchors correctly. Any field
+ * whose anchor isn't found confidently is returned empty: this never guesses and
+ * never throws. The caller fills the form with whatever was found and the user
+ * reviews/corrects everything before saving (FR-5.3 — nothing is auto-committed).
  *
  * @param {string} text  combined OCR text of the approval page.
  * @returns {{title: string, authors: string[], program: string, adviser: string, panelists: string[]}}
@@ -16,13 +20,17 @@ export default function parseApprovalPage(text) {
 
     const flat = text.replace(/\r\n?/g, '\n');
 
+    // Title sits between "entitled[:]" and "submitted by". Prefer the quoted
+    // span if the page wraps the title in quotes; otherwise take the whole region.
+    const titleRegion = extractBetween(flat, 'entitled', 'submitted by');
+
     return {
-        // Title sits between "entitled[:]" and "submitted by".
-        title: extractBetween(flat, /entitled:?/i, /submitted by/i),
+        title: extractQuoted(titleRegion) || stripEdges(titleRegion),
 
         // Authors sit between "submitted by" and "in partial fulfil(l)ment",
-        // joined by "and" / "&". Each name keeps its "Lastname, Firstname" form.
-        authors: splitNames(extractBetween(flat, /submitted by/i, /in partial fulfill?ment/i)),
+        // joined by "and" / "&". Each name keeps its "Lastname, Firstname" form
+        // and is trimmed to its name-shaped head (trailing OCR noise dropped).
+        authors: splitNames(extractBetween(flat, 'submitted by', 'in partial')),
 
         // Program/degree follows "for the degree of" to the end of that line.
         program: extractProgram(flat),
@@ -33,19 +41,38 @@ export default function parseApprovalPage(text) {
 }
 
 /**
- * Return the text between the first match of `startRe` and the next match of
- * `endRe` after it, with internal whitespace/newlines collapsed to spaces.
- * Empty string if the start anchor is missing.
+ * Return the text between the first fuzzy match of `startNeedle` and the next
+ * fuzzy match of `endNeedle` after it, with internal whitespace/newlines
+ * collapsed to spaces. Empty string if the start anchor isn't found.
  */
-function extractBetween(text, startRe, endRe) {
-    const start = text.match(startRe);
+function extractBetween(text, startNeedle, endNeedle) {
+    const start = findFuzzy(text, startNeedle);
     if (!start) return '';
 
-    const after = text.slice(start.index + start[0].length);
-    const end = after.match(endRe);
+    const after = text.slice(start.end);
+    const end = findFuzzy(after, endNeedle);
     const segment = end ? after.slice(0, end.index) : after;
 
     return collapse(segment);
+}
+
+/**
+ * If `region` contains a quoted span (straight or curly quotes), return its
+ * contents; otherwise return '' so the caller falls back to the whole region.
+ */
+function extractQuoted(region) {
+    if (!region) return '';
+
+    const match = region.match(/[“”"'‘’]([^“”"'‘’]+)[“”"'‘’]/);
+    return match ? collapse(match[1]) : '';
+}
+
+/**
+ * Trim leading separator noise (a stray ":", "-", quote, etc. left by the anchor)
+ * and trailing punctuation from an unquoted title region.
+ */
+function stripEdges(value) {
+    return value.replace(/^[^A-Za-z0-9]+/, '').replace(/[\s:;,.\-]+$/, '');
 }
 
 /** Collapse all runs of whitespace (incl. newlines) into single spaces, trimmed. */
@@ -54,25 +81,38 @@ function collapse(value) {
 }
 
 /**
- * Split a "A and B & C" author segment into separate names. Each name is kept
- * verbatim (e.g. "Dela Cruz, Juan") — order and "Lastname, Firstname" preserved.
+ * Split a "A and B & C" author segment into separate names, each trimmed to its
+ * name-shaped head. Order and "Lastname, Firstname" form are preserved.
  */
 function splitNames(segment) {
     if (!segment) return [];
 
     return segment
         .split(/\s+and\s+|\s*&\s*/i)
-        .map((name) => collapse(name))
+        .map(trimToName)
         .filter((name) => name.length > 1);
 }
 
-/** Degree text after "for the degree of", up to the end of the line. */
-function extractProgram(text) {
-    const match = text.match(/for the degree of\s+([^\n]+)/i);
+/**
+ * Keep the leading run of name-shaped characters (letters, spaces, and the
+ * comma/period/hyphen/apostrophe that appear in real names), dropping any
+ * trailing OCR noise such as digits or stray symbols.
+ */
+function trimToName(raw) {
+    const match = collapse(raw).match(/[A-Za-z][A-Za-z.,'’\- ]*/);
     if (!match) return '';
 
-    // Keep the line; drop a trailing period and surrounding noise.
-    return collapse(match[1]).replace(/[.\s]+$/, '');
+    return match[0].replace(/[\s.,]+$/, '').trim();
+}
+
+/** Degree text after "for the degree of", up to the end of that line. */
+function extractProgram(text) {
+    const anchor = findFuzzy(text, 'for the degree of');
+    if (!anchor) return '';
+
+    // Take the remainder of the anchor's line, dropping trailing punctuation.
+    const line = text.slice(anchor.end).split('\n')[0];
+    return collapse(line).replace(/[.\s]+$/, '');
 }
 
 /**
