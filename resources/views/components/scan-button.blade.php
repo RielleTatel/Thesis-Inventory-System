@@ -1,6 +1,8 @@
 {{-- OCR scan trigger (FR-5.x). Opens the OCR upload + review modal for its field.
      Presentational only — the parent <x-ocr-scanner> owns the Alpine state and
      wires @click. Output is always reviewed before save, never auto-committed. --}}
+@props(['label' => 'Scan from printed copy'])
+
 <button {{ $attributes->merge([
             'type' => 'button',
             'title' => 'Scan from a printed copy — upload an image to detect its text',
@@ -13,5 +15,5 @@
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
         <circle cx="12" cy="13" r="4"/>
     </svg>
-    Scan from printed copy
+    {{ $label }}
 </button>

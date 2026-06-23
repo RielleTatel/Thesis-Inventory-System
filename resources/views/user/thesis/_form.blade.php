@@ -25,6 +25,18 @@
 
     <x-card>
         <div class="space-y-6">
+            {{-- Approval-page OCR: read one signature page and auto-fill several
+                 fields at once. Parsed values are populated below for review. --}}
+            <div class="flex flex-col gap-3 rounded-md border border-cyan/30 bg-cyan/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-text">Have the approval / signature page?</p>
+                    <p class="text-xs text-text/60">
+                        Scan it to auto-fill Title, Authors, Program, Adviser and Panelists — then review before saving.
+                    </p>
+                </div>
+                <x-ocr-scanner mode="approval" field="approval page" />
+            </div>
+
             {{-- Title --}}
             <div>
                 <label for="title" class="{{ $labelClass }}">Title <span class="text-danger">*</span></label>

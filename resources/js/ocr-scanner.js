@@ -1,23 +1,32 @@
 import cleanOcrText from './ocr-clean';
+import parseApprovalPage from './parse-approval-page';
+import { titleCaseAuthor, titleCaseTitle } from './text-case';
 
 /**
  * Reusable OCR capture + review controller (SRS FR-5.3 / NFR-3.3).
  *
- * UPLOAD path only for now, and it accepts MULTIPLE images for one field (e.g.
- * an abstract photographed across two pages). Images are read in the order
- * listed; the cleaned text of each is combined into one editable review box.
+ * UPLOAD path only for now, and it accepts MULTIPLE images (e.g. an abstract
+ * photographed across two pages). Images are read in the order listed; the
+ * cleaned text of each is combined into one editable review box.
+ *
+ * Two modes share this exact pipeline:
+ *   - 'field'    — fills a single target textarea (abstract / recommendations).
+ *   - 'approval' — parses a thesis approval/signature page and fills several
+ *                  form fields at once via parseApprovalPage().
+ * Either way the result is shown for review and never auto-committed.
  *
  * The camera and QR capture paths added later reuse this controller as-is: they
- * only need to produce image File/Blob(s) and call `addFiles()` — the OCR run
- * and the mandatory review step stay identical, so text is never auto-committed.
+ * only need to produce image File/Blob(s) and call `addFiles()`.
  *
  * Registered as an Alpine component: `Alpine.data('ocrScanner', ocrScanner)`.
  *
- * @param {string} targetId  id of the textarea this scanner fills on confirm.
+ * @param {string} targetId  id of the textarea filled in 'field' mode.
+ * @param {string} mode      'field' (default) or 'approval'.
  */
-export default function ocrScanner(targetId) {
+export default function ocrScanner(targetId, mode = 'field') {
     return {
         targetId,
+        mode,
         open: false,
         dragging: false,
         status: 'idle', // idle | reading | done
@@ -146,18 +155,52 @@ export default function ocrScanner(targetId) {
         },
 
         /**
-         * Commit the reviewed text into the target field. Stays editable there
-         * and saves through the normal form flow — nothing is auto-committed.
+         * Commit the reviewed text into the target field ('field' mode). Stays
+         * editable there and saves through the normal form flow — not committed.
          */
         useText() {
-            const field = document.getElementById(this.targetId);
-            if (field) {
-                field.value = this.text;
-                // Let Alpine / validation bound to the field react to the change.
-                field.dispatchEvent(new Event('input', { bubbles: true }));
-                field.focus();
-            }
+            this.setField(this.targetId, this.text, { focus: true });
             this.closeModal();
+        },
+
+        /**
+         * Parse the reviewed approval-page text and populate the matching form
+         * fields ('approval' mode). Unmatched fields are left untouched; every
+         * filled value remains editable in the form for review before saving.
+         */
+        applyApproval() {
+            const parsed = parseApprovalPage(this.text);
+
+            // Title-case the scanned Title and Authors at fill-time; everything
+            // stays editable in the form for review (FR-5.3).
+            this.setField('title', titleCaseTitle(parsed.title));
+            this.setField('program', parsed.program);
+            this.fillList('authors', parsed.authors.map(titleCaseAuthor));
+            this.fillList('advisers', parsed.adviser ? [parsed.adviser] : []);
+            this.fillList('panelists', parsed.panelists);
+
+            this.closeModal();
+        },
+
+        /** Set a plain input/textarea by id and notify Alpine/validation. */
+        setField(id, value, { focus = false } = {}) {
+            if (!id || !value) return;
+
+            const field = document.getElementById(id);
+            if (!field) return;
+
+            field.value = value;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            if (focus) field.focus();
+        },
+
+        /** Fill a repeatable-list field (authors/advisers/panelists) by name. */
+        fillList(name, values) {
+            if (!values || !values.length) return;
+
+            window.dispatchEvent(new CustomEvent('ocr-fill-list', {
+                detail: { name, values: [...values] },
+            }));
         },
     };
 }
