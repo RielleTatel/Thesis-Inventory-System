@@ -5,6 +5,7 @@ namespace App\Actions\Concerns;
 use App\Models\Thesis;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Shared logic for the thesis approval/signature page image on the s3 disk.
@@ -28,8 +29,22 @@ trait HandlesApprovalPage
         $file = $data['approval_page'] ?? null;
 
         if ($file instanceof UploadedFile) {
+            $path = $file->store('approval_pages', 's3');
+
+            // A false/empty return means the s3 write failed (bad creds, network,
+            // bucket). Never persist a falsy path like "0": surface the failure
+            // and leave any existing image untouched. This is an infrastructure
+            // error, not input validation — ValidationException is just the
+            // cleanest way to show it on the form field.
+            if (! $path) {
+                throw ValidationException::withMessages([
+                    'approval_page' => 'The approval page could not be uploaded. Please check your connection and try again.',
+                ]);
+            }
+
+            // The new file is safely stored — only now drop the previous one.
             $this->deleteApprovalPageFile($thesis->approval_page_path);
-            $thesis->approval_page_path = $file->store('approval_pages', 's3');
+            $thesis->approval_page_path = $path;
             $thesis->save();
 
             return;

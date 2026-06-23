@@ -69,19 +69,20 @@ class Thesis extends Model
      */
     public function hasApprovalPage(): bool
     {
-        return $this->approval_page_path !== null && $this->approval_page_path !== '';
+        return $this->approvalPagePath() !== null;
     }
 
     /**
      * A browser-viewable URL for the approval page, or null if none is stored.
-     * Private buckets get a short-lived signed URL; if the driver can't sign
-     * (a public bucket), fall back to the plain public URL.
+     * Private buckets get a short-lived signed URL; otherwise fall back to the
+     * plain public URL. If neither can be produced (misconfig, missing object),
+     * return null so the View button hides instead of rendering a broken image.
      */
     public function approvalPageUrl(): ?string
     {
-        $path = $this->approval_page_path;
+        $path = $this->approvalPagePath();
 
-        if ($path === null || $path === '') {
+        if ($path === null) {
             return null;
         }
 
@@ -91,8 +92,25 @@ class Thesis extends Model
         try {
             return $disk->temporaryUrl($path, now()->addMinutes(30));
         } catch (\Throwable) {
-            return $disk->url($path);
+            // Signing unsupported (public bucket) — try a plain URL below.
         }
+
+        try {
+            return $disk->url($path);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * The stored approval-page path, or null when it's absent or a known-bad
+     * sentinel ("0"/"") left behind by an earlier failed upload.
+     */
+    private function approvalPagePath(): ?string
+    {
+        $path = $this->approval_page_path;
+
+        return ($path === null || $path === '' || $path === '0') ? null : $path;
     }
 
     /**
