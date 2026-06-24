@@ -37,7 +37,7 @@ class ThesisFactory extends Factory
 
     /**
      * Attach a realistic spread of ordered multi-value rows
-     * (authors, advisers, panelists, keywords) after creation.
+     * (authors, advisers, panelists, proofreaders, keywords) after creation.
      */
     public function withRelations(): static
     {
@@ -45,6 +45,8 @@ class ThesisFactory extends Factory
             $this->fillOrdered($thesis, 'authors', fn: fn () => fake()->name(), count: fake()->numberBetween(1, 3));
             $this->fillOrdered($thesis, 'advisers', fn: fn () => 'Dr. '.fake()->name(), count: fake()->numberBetween(1, 2));
             $this->fillOrdered($thesis, 'panelists', fn: fn () => 'Dr. '.fake()->name(), count: fake()->numberBetween(2, 3));
+            // Optional: 0 means this thesis has none (displayed as "N/A").
+            $this->fillOrdered($thesis, 'proofreaders', fn: fn () => fake()->name(), count: fake()->numberBetween(0, 2));
             $this->fillOrdered($thesis, 'keywords', fn: fn () => fake()->unique()->word(), count: fake()->numberBetween(3, 5));
         });
     }

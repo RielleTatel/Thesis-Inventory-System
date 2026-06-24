@@ -65,6 +65,16 @@
                         @endforelse
                     </x-detail-row>
 
+                    {{-- Optional: an empty proofreaders relationship displays as "N/A"
+                         (display concern only — never stored as a literal value). --}}
+                    <x-detail-row label="Proofreader">
+                        @forelse ($thesis->proofreaders as $proofreader)
+                            <x-chip kind="person">{{ $proofreader->name }}</x-chip>
+                        @empty
+                            <span class="text-sm text-text/50">N/A</span>
+                        @endforelse
+                    </x-detail-row>
+
                     {{-- Approval/signature page backs up the Adviser/Panelists above. --}}
                     <x-approval-page-viewer :thesis="$thesis" />
 

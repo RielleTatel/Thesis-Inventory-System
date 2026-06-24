@@ -10,6 +10,7 @@
     $vAuthors = old('authors', $thesis?->authors->pluck('name')->all() ?? []);
     $vAdvisers = old('advisers', $thesis?->advisers->pluck('name')->all() ?? []);
     $vPanelists = old('panelists', $thesis?->panelists->pluck('name')->all() ?? []);
+    $vProofreaders = old('proofreaders', $thesis?->proofreaders->pluck('name')->all() ?? []);
     $vKeywords = old('keywords', $thesis?->keywords->pluck('name')->all() ?? []);
 
     $inputClass = 'w-full rounded-md border-0 bg-input text-sm text-text placeholder:text-text/40 focus:ring-2 focus:ring-cyan';
@@ -96,6 +97,8 @@
             {{-- Adviser / Panelists / Keywords --}}
             <x-repeatable-list name="advisers" label="Adviser" placeholder="Adviser full name" :values="$vAdvisers" />
             <x-repeatable-list name="panelists" label="Panelists" placeholder="Panelist full name" :values="$vPanelists" />
+            <x-repeatable-list name="proofreaders" label="Proofreader" hint="Optional — leave blank if none."
+                               placeholder="Proofreader full name" :values="$vProofreaders" />
             <x-repeatable-list name="keywords" label="Keywords" hint="Used for search and filtering."
                                placeholder="Keyword or topic" :values="$vKeywords" :numbered="false" />
 
