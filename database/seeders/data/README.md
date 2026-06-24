@@ -17,10 +17,10 @@ browsable catalog of 12 Computer Science Department theses (AY 2025-2026).
      recommendations, status = 'published'), then
    - insert its authors / advisers / panelists / keywords into the child tables
      (each with an incrementing `position` starting at 1), then
-   - copy `approval-images/{approval_image}` into the storage disk using the
-     same path pattern the OCR scanner writes to, and set `approval_page_path`.
-3. The image copy must be graceful: if the disk/bucket is not configured (e.g.
-   local dev without S3), log a warning and continue, do not abort the seed.
+   - copy `approval-images/{approval_image}` onto the private `local` disk using
+     the same path pattern the OCR scanner writes to, and set `approval_page_path`.
+3. The image copy must be graceful: if the copy fails, log a warning and
+   continue, do not abort the seed.
 
 ## IMPORTANT - status
 Every record MUST be seeded with `status = 'published'`. The column defaults to

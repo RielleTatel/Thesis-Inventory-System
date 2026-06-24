@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('theses', function (Blueprint $table) {
-            // Path (on the s3 disk) to the signed approval/signature page image.
+            // Path (on the private local disk) to the approval/signature page image.
             // The single allowed exception to the metadata-only rule (FR-4.4) —
             // storing the page image was approved by the department chair.
             $table->string('approval_page_path')->nullable()->after('recommendations');

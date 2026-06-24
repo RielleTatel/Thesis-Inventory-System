@@ -7,7 +7,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Earlier failed s3 uploads (a silent store() === false) persisted a
+        // Earlier failed uploads (a silent store() === false) persisted a
         // falsy "0", and some rows may hold "". Reset both to a clean null so
         // the UI treats them as "no approval page".
         DB::table('theses')

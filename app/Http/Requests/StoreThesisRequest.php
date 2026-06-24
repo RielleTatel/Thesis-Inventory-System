@@ -32,7 +32,8 @@ class StoreThesisRequest extends FormRequest
             'recommendations' => ['nullable', 'string', 'max:20000'],
 
             // Approval/signature page image — the one allowed non-metadata
-            // attachment (FR-4.4 exception). Stored on s3; see HandlesApprovalPage.
+            // attachment (FR-4.4 exception). Stored on the private local disk;
+            // see HandlesApprovalPage.
             'approval_page' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             // When editing: tick to delete the current approval page on save.
             'remove_approval_page' => ['nullable', 'boolean'],

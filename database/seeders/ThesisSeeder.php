@@ -13,15 +13,6 @@ use Illuminate\Support\Facades\Storage;
 class ThesisSeeder extends Seeder
 {
     /**
-     * Disk + directory the OCR approval-page upload writes to
-     * (App\Actions\Concerns\HandlesApprovalPage). Reused verbatim so seeded
-     * images land exactly where the app reads them from.
-     */
-    private const APPROVAL_DISK = 's3';
-
-    private const APPROVAL_DIR = 'approval_pages';
-
-    /**
      * The owning department, by the code DatabaseSeeder assigns it ("Science
      * Information Technology Engineering Academic Organization" / SITEAO).
      * All 12 handover theses belong here.
@@ -117,10 +108,10 @@ class ThesisSeeder extends Seeder
 
     /**
      * Copy a handover approval image onto the same disk/path the OCR upload uses
-     * (a generated filename under approval_pages/ on s3), then record its stored
-     * path. Graceful by design: if the disk is unconfigured or the copy fails
-     * (e.g. local dev without S3), warn and leave approval_page_path null —
-     * never abort the run, never persist a bad or empty path.
+     * (a generated filename under approval_pages/ on the private 'local' disk),
+     * then record its stored path. Graceful by design: if the copy fails, warn
+     * and leave approval_page_path null — never abort the run, never persist a
+     * bad or empty path.
      */
     private function storeApprovalPage(Thesis $thesis, string $ref, string $filename): void
     {
@@ -134,10 +125,10 @@ class ThesisSeeder extends Seeder
 
         try {
             /** @var FilesystemAdapter $disk */
-            $disk = Storage::disk(self::APPROVAL_DISK);
+            $disk = Storage::disk(Thesis::APPROVAL_DISK);
 
-            // Mirrors HandlesApprovalPage's $file->store('approval_pages', 's3').
-            $path = $disk->putFile(self::APPROVAL_DIR, new File($source));
+            // Mirrors HandlesApprovalPage's $file->store(APPROVAL_DIR, APPROVAL_DISK).
+            $path = $disk->putFile(Thesis::APPROVAL_DIR, new File($source));
         } catch (\Throwable $e) {
             $this->command->warn(sprintf('[%s] approval image upload failed (%s) — seeded without it.', $ref, $e->getMessage()));
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\DepartmentAccountController;
 use App\Http\Controllers\Admin\ThesisController as AdminThesisController;
+use App\Http\Controllers\ApprovalPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicThesisController;
 use App\Http\Controllers\User\ThesisController;
@@ -11,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 // Public viewer (no auth) — browse/search landing + thesis detail (FR-6.x).
 Route::get('/', [PublicThesisController::class, 'index'])->name('public.thesis.index');
 Route::get('/theses/{thesis}', [PublicThesisController::class, 'show'])->name('public.thesis.show');
+// Approval/signature page image, streamed inline as public proof of approval
+// (no auth) from the private 'local' disk — replaces the old presigned URL.
+Route::get('/theses/{thesis}/approval-page', ApprovalPageController::class)
+    ->name('public.thesis.approval-page');
 
 Route::get('/dashboard', function () {
     // Each role has its own home; the bare dashboard is just a router.

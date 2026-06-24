@@ -187,10 +187,10 @@ class DepartmentThesisTest extends TestCase
         $this->actingAs($admin)->get(route('department.theses.index'))->assertForbidden();
     }
 
-    /** Attach an existing approval-page file (on the fake s3 disk) to a thesis. */
+    /** Attach an existing approval-page file (on the fake local disk) to a thesis. */
     private function seedApprovalPage(Thesis $thesis, string $name = 'old.jpg'): string
     {
-        $path = UploadedFile::fake()->image($name)->store('approval_pages', 's3');
+        $path = UploadedFile::fake()->image($name)->store('approval_pages', 'local');
         $thesis->forceFill(['approval_page_path' => $path])->save();
 
         return $path;
@@ -198,7 +198,7 @@ class DepartmentThesisTest extends TestCase
 
     public function test_department_can_upload_an_approval_page_on_create(): void
     {
-        Storage::fake('s3');
+        Storage::fake('local');
         $a = Department::factory()->create();
 
         $this->actingAs($this->departmentUser($a))
@@ -216,12 +216,12 @@ class DepartmentThesisTest extends TestCase
 
         $this->assertNotNull($thesis->approval_page_path);
         $this->assertStringStartsWith('approval_pages/', $thesis->approval_page_path);
-        Storage::disk('s3')->assertExists($thesis->approval_page_path);
+        Storage::disk('local')->assertExists($thesis->approval_page_path);
     }
 
     public function test_approval_page_must_be_a_valid_image(): void
     {
-        Storage::fake('s3');
+        Storage::fake('local');
         $a = Department::factory()->create();
 
         $this->actingAs($this->departmentUser($a))
@@ -235,12 +235,12 @@ class DepartmentThesisTest extends TestCase
             ])
             ->assertSessionHasErrors('approval_page');
 
-        $this->assertEmpty(Storage::disk('s3')->allFiles());
+        $this->assertEmpty(Storage::disk('local')->allFiles());
     }
 
     public function test_uploading_a_new_approval_page_replaces_and_deletes_the_old_file(): void
     {
-        Storage::fake('s3');
+        Storage::fake('local');
         $a = Department::factory()->create();
         $thesis = $this->thesisFor($a);
         $oldPath = $this->seedApprovalPage($thesis);
@@ -257,14 +257,14 @@ class DepartmentThesisTest extends TestCase
             ->assertRedirect(route('department.theses.index'));
 
         $thesis->refresh();
-        Storage::disk('s3')->assertMissing($oldPath);
+        Storage::disk('local')->assertMissing($oldPath);
         $this->assertNotSame($oldPath, $thesis->approval_page_path);
-        Storage::disk('s3')->assertExists($thesis->approval_page_path);
+        Storage::disk('local')->assertExists($thesis->approval_page_path);
     }
 
     public function test_department_can_remove_the_approval_page(): void
     {
-        Storage::fake('s3');
+        Storage::fake('local');
         $a = Department::factory()->create();
         $thesis = $this->thesisFor($a);
         $path = $this->seedApprovalPage($thesis);
@@ -282,12 +282,12 @@ class DepartmentThesisTest extends TestCase
 
         $thesis->refresh();
         $this->assertNull($thesis->approval_page_path);
-        Storage::disk('s3')->assertMissing($path);
+        Storage::disk('local')->assertMissing($path);
     }
 
     public function test_deleting_a_thesis_deletes_its_approval_page_file(): void
     {
-        Storage::fake('s3');
+        Storage::fake('local');
         $a = Department::factory()->create();
         $thesis = $this->thesisFor($a);
         $path = $this->seedApprovalPage($thesis);
@@ -297,7 +297,7 @@ class DepartmentThesisTest extends TestCase
             ->assertRedirect(route('department.theses.index'));
 
         $this->assertDatabaseMissing('theses', ['id' => $thesis->id]);
-        Storage::disk('s3')->assertMissing($path);
+        Storage::disk('local')->assertMissing($path);
     }
 
     public function test_a_failed_upload_does_not_persist_a_path(): void
@@ -305,10 +305,10 @@ class DepartmentThesisTest extends TestCase
         $a = Department::factory()->create();
         $thesis = $this->thesisFor($a);
 
-        // Force the s3 disk to report a failed write (e.g. bad creds / network).
+        // Force the local disk to report a failed write (e.g. permissions / full disk).
         $disk = \Mockery::mock(FilesystemAdapter::class);
         $disk->shouldReceive('putFileAs')->andReturn(false);
-        Storage::set('s3', $disk);
+        Storage::set('local', $disk);
 
         $this->actingAs($this->departmentUser($a))
             ->put(route('department.theses.update', $thesis), [
@@ -328,7 +328,7 @@ class DepartmentThesisTest extends TestCase
 
     public function test_non_owner_department_cannot_upload_an_approval_page(): void
     {
-        Storage::fake('s3');
+        Storage::fake('local');
         $a = Department::factory()->create();
         $b = Department::factory()->create();
         $foreign = $this->thesisFor($b);
@@ -346,6 +346,6 @@ class DepartmentThesisTest extends TestCase
 
         $foreign->refresh();
         $this->assertNull($foreign->approval_page_path);
-        $this->assertEmpty(Storage::disk('s3')->allFiles());
+        $this->assertEmpty(Storage::disk('local')->allFiles());
     }
 }
