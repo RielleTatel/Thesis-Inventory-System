@@ -243,7 +243,7 @@
                                                     <span class="font-semibold text-navy leading-snug">{{ $thesis->title }}</span>
                                                 </td>
                                                 <td class="py-3 pr-4 text-text/70 max-w-[14rem]">
-                                                    {{ $thesis->authors->pluck('name')->join(', ') ?: '—' }}
+                                                    {{ $thesis->authors->pluck('name')->join('; ') ?: '—' }}
                                                 </td>
                                                 <td class="py-3 pr-4 text-text/70 whitespace-nowrap">
                                                     {{ $thesis->department->name }}

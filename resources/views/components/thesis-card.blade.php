@@ -14,7 +14,7 @@
     </h3>
 
     @if ($thesis->authors->isNotEmpty())
-        <p class="text-sm font-semibold text-text/70">{{ $thesis->authors->pluck('name')->join(', ') }}</p>
+        <p class="text-sm font-semibold text-text/70">{{ $thesis->authors->pluck('name')->join('; ') }}</p>
     @endif
 
     <p class="text-sm text-text/70 leading-relaxed line-clamp-3">{{ $thesis->abstract }}</p>
