@@ -8,7 +8,7 @@ use App\Models\Thesis;
 /**
  * Delete a thesis. Its ordered multi-value rows are removed by the
  * cascading foreign keys on thesis_authors/advisers/panelists/keywords, and
- * its approval-page image is removed from s3 so nothing is orphaned.
+ * its approval-page image is removed from the local disk so nothing is orphaned.
  */
 class DeleteThesisAction
 {

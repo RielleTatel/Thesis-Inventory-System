@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -19,6 +17,17 @@ class Thesis extends Model
 {
     /** @use HasFactory<ThesisFactory> */
     use HasFactory, LogsActivity;
+
+    /**
+     * Single source of truth for where the approval/signature page image lives:
+     * the private 'local' disk, under approval_pages/. Shared by the upload flow
+     * (App\Actions\Concerns\HandlesApprovalPage), the seeder (ThesisSeeder), and
+     * the streaming route (App\Http\Controllers\ApprovalPageController) so they
+     * can never drift apart. The school has no third-party object storage.
+     */
+    public const APPROVAL_DISK = 'local';
+
+    public const APPROVAL_DIR = 'approval_pages';
 
     // "thesis" → "theses"; Laravel would otherwise guess "thesis".
     protected $table = 'theses';
@@ -74,39 +83,26 @@ class Thesis extends Model
 
     /**
      * A browser-viewable URL for the approval page, or null if none is stored.
-     * Private buckets get a short-lived signed URL; otherwise fall back to the
-     * plain public URL. If neither can be produced (misconfig, missing object),
-     * return null so the View button hides instead of rendering a broken image.
+     * Points at the public streaming route (ApprovalPageController), which serves
+     * the image inline from the private 'local' disk — no third-party storage or
+     * signed URLs. Returns null when there's nothing to show so the View button
+     * hides instead of linking to a 404.
      */
     public function approvalPageUrl(): ?string
     {
-        $path = $this->approvalPagePath();
-
-        if ($path === null) {
+        if (! $this->hasApprovalPage()) {
             return null;
         }
 
-        /** @var FilesystemAdapter $disk */
-        $disk = Storage::disk('s3');
-
-        try {
-            return $disk->temporaryUrl($path, now()->addMinutes(30));
-        } catch (\Throwable) {
-            // Signing unsupported (public bucket) — try a plain URL below.
-        }
-
-        try {
-            return $disk->url($path);
-        } catch (\Throwable) {
-            return null;
-        }
+        return route('public.thesis.approval-page', $this);
     }
 
     /**
      * The stored approval-page path, or null when it's absent or a known-bad
-     * sentinel ("0"/"") left behind by an earlier failed upload.
+     * sentinel ("0"/"") left behind by an earlier failed upload. The streaming
+     * route resolves the file strictly from this value — never from user input.
      */
-    private function approvalPagePath(): ?string
+    public function approvalPagePath(): ?string
     {
         $path = $this->approval_page_path;
 

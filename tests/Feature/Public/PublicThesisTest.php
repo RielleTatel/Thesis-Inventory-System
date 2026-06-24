@@ -5,6 +5,8 @@ namespace Tests\Feature\Public;
 use App\Models\Department;
 use App\Models\Thesis;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PublicThesisTest extends TestCase
@@ -157,5 +159,38 @@ class PublicThesisTest extends TestCase
         // SearchThesisRequest: years must be integers, q is length-capped.
         $this->get('/?year_from=not-a-year')->assertSessionHasErrors('year_from');
         $this->get('/?q='.str_repeat('a', 200))->assertSessionHasErrors('q');
+    }
+
+    public function test_approval_page_route_streams_the_stored_image_inline(): void
+    {
+        Storage::fake('local');
+        $path = UploadedFile::fake()->image('approval.jpg')->store('approval_pages', 'local');
+        $thesis = $this->makeThesis(['title' => 'Has Approval']);
+        $thesis->forceFill(['approval_page_path' => $path])->save();
+
+        // Public (no auth) and served inline with the stored image's content type.
+        $response = $this->get(route('public.thesis.approval-page', $thesis));
+
+        $response->assertOk();
+        $this->assertSame('image/jpeg', $response->headers->get('Content-Type'));
+        $this->assertStringContainsString('inline', (string) $response->headers->get('Content-Disposition'));
+    }
+
+    public function test_approval_page_route_404s_when_no_image_is_stored(): void
+    {
+        $thesis = $this->makeThesis(['title' => 'No Approval']);
+
+        $this->get(route('public.thesis.approval-page', $thesis))->assertNotFound();
+    }
+
+    public function test_approval_page_route_404s_for_a_non_image_file(): void
+    {
+        Storage::fake('local');
+        // A poisoned path pointing at a non-image must never be streamed.
+        $path = UploadedFile::fake()->create('notes.pdf', 40, 'application/pdf')->store('approval_pages', 'local');
+        $thesis = $this->makeThesis(['title' => 'Bad File']);
+        $thesis->forceFill(['approval_page_path' => $path])->save();
+
+        $this->get(route('public.thesis.approval-page', $thesis))->assertNotFound();
     }
 }
