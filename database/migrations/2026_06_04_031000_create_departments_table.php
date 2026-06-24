@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('code')->unique(); // short identifier, e.g. "CCS"
+            $table->string('code')->unique(); // short identifier, e.g. "SITEAO"
             $table->timestamps();
         });
     }
