@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Seed the application's database with foundation data:
-     * roles, one administrator account, and two sample departments.
+     * roles, one administrator account, and the single owning department.
      */
     public function run(): void
     {
@@ -23,28 +23,25 @@ class DatabaseSeeder extends Seeder
         // Administrator account (no owning department).
         User::factory()->create([
             'name' => 'System Administrator',
-            'email' => 'admin@example.com',
+            'email' => 'admin@adzu.edu.ph',
             'password' => Hash::make('password'),
         ])->assignRole('administrator');
 
-        // Two sample departments, each with a department-role login.
-        $departments = [
-            ['name' => 'College of Computer Studies', 'code' => 'CCS'],
-            ['name' => 'College of Engineering', 'code' => 'COE'],
-        ];
+        // The single department that owns the seeded thesis catalog, with its
+        // department-role login.
+        $department = Department::create([
+            'name' => 'Science Information Technology Engineering Academic Organization',
+            'code' => 'SITEAO',
+        ]);
 
-        foreach ($departments as $data) {
-            $department = Department::create($data);
+        User::factory()->create([
+            'name' => 'SITEAO Department Account',
+            'email' => 'siteao@adzu.edu.ph',
+            'password' => Hash::make('password'),
+            'department_id' => $department->id,
+        ])->assignRole('department');
 
-            User::factory()->create([
-                'name' => $data['name'].' Account',
-                'email' => strtolower($data['code']).'@example.com',
-                'password' => Hash::make('password'),
-                'department_id' => $department->id,
-            ])->assignRole('department');
-        }
-
-        // Sample theses (depends on the departments created above).
+        // Thesis catalog (depends on the department created above).
         $this->call(ThesisSeeder::class);
     }
 }

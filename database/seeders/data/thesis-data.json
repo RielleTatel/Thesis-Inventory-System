@@ -1,0 +1,354 @@
+{
+  "_meta": {
+    "description": "Seed data for the ADZU Thesis Inventory System handover. 12 Computer Science Department theses (AY 2025-2026).",
+    "department_name": "Computer Science",
+    "note_department": "All 12 theses attach to the single Computer Science department. The seeder should resolve this row by name or code from the existing DepartmentSeeder; confirm the exact name/code used.",
+    "note_authors": "Authors are stored surname-first as printed on the title/approval pages. Advisers and panelists use First M. Last format.",
+    "note_panelists": "Panelists = the panel of examiners (Chair Panel + Panelists). Administrative signatories (Thesis/Capstone Coordinator, Dept Chair, Dean) are intentionally excluded. T12 used an older template listing only a Chair Panel, so it has one panelist.",
+    "note_keywords": "Keywords for T6, T7, and T11 are taken verbatim from the papers' own keyword lists. The rest are derived from each abstract; edit freely.",
+    "note_images": "approval_image points to a file in thesis-assets/approval-images/. The committed copies are the real scanned approval pages. Swap for placeholders before making the repo public if signatures must stay private.",
+    "note_T5": "T5's recommendation is condensed (plan B) and is missing source scan page 182.",
+    "count": 12
+  },
+  "theses": [
+    {
+      "ref": "T1",
+      "title": "A Web-Based Centralized Internship Management System for the Computer Science Department of Ateneo de Zamboanga University",
+      "program": "Bachelor of Science in Information Technology",
+      "year": 2026,
+      "authors": [
+        "Alcala, Jae Ann O.",
+        "Duqueza, Christian Jed M."
+      ],
+      "advisers": [
+        "Clairizza V. Arcillas"
+      ],
+      "panelists": [
+        "Precious T. Opinion",
+        "Fe Grace T. Cañedo",
+        "Jessica D. Partosa"
+      ],
+      "keywords": [
+        "Internship Management",
+        "Web-Based System",
+        "Role-Based Access",
+        "MOA Tracking",
+        "Student Monitoring"
+      ],
+      "approval_image": "T1.jpg",
+      "abstract": "Managing internship programs often involves multiple stakeholders, fragmented documentation, and manual coordination between students, faculty coordinators, and partner organizations. These challenges make it difficult to track internship applications, monitor student progress, manage evaluation records, and maintain consistent communication throughout the internship process. To address these issues, this study developed a web-based Internship Management System designed to streamline and centralize internship management for the Computer Science, Information Technology, and New Media and Computer Animation programs under the Computer Science Department of Ateneo de Zamboanga University. The system was developed using a structured software development process and implemented as a role-based web platform supporting five primary user types: administrator, coordinator, student, partner organization head, and supervisor. Key system modules include internship application management, weekly journal submission and grading, internship progress monitoring, certificate and evaluation submission, partner organization invitation and registration, supervisor account management, and Memorandum of Agreement (MOA) lifecycle management with version tracking. These integrated modules allow the system to automate previously manual processes and provide a centralized platform for managing internship-related records. System functionality was validated through alpha testing by developers and beta testing with actual end-users, including coordinators, students, and partner organization representatives. Evaluation results based on usability, interface design, content quality, and overall system performance show that the system is intuitive, well-organized, and effective in supporting internship processes. These findings confirm that the system serves as a reliable platform for managing and monitoring internship programs within the department.",
+      "recommendations": "To ensure the long-term use and effectiveness of the Web-Based Centralized Internship Management System, it is recommended that the system be fully integrated into the daily operations of the Computer Science Department of Ateneo de Zamboanga University. Since the system centralizes internship applications, journal submissions, student monitoring, Memorandum of Agreement (MOA) processing, and evaluation records, the department should establish a clear Standard Operating Procedure (SOP) for its use. This will help define how the system is used in practice and ensure that all users follow a consistent process. It is also important to conduct proper onboarding and regular training sessions for students, coordinators, administrators, and partner organization representatives so they can use the system correctly and confidently.\n\nFor system maintenance, regular data backups should be implemented to prevent data loss and ensure that records remain secure. Scheduled maintenance and system updates are also necessary to keep the system stable and responsive. Basic security practices, such as enforcing role-based access, maintaining secure passwords, and performing occasional system checks, should be followed to protect sensitive information. In addition, the system should be supported by a stable hosting environment and reliable internet connection to avoid interruptions during use.\n\nThe system may also be expanded beyond the Computer Science Department. While it is currently designed for a single department, it can be adapted for use in other programs within the College of Science and Information Technology (CSITE), or even across other colleges in the university. This can help standardize internship processes and improve coordination across different academic units.\n\nFor future improvements, additional features may be considered to enhance usability and accessibility. These include developing a mobile version of the system so users can access it more easily, as well as adding an AI-based assistant to help guide users within the platform. Other possible enhancements include improved reporting tools, and further automation of system processes. These additions can help the system remain useful, flexible, and responsive to the needs of its users over time."
+    },
+    {
+      "ref": "T2",
+      "title": "Course Demand and Student Management System for Ateneo de Zamboanga University Graduate Programs",
+      "program": "Bachelor of Science in Information Technology",
+      "year": 2026,
+      "authors": [
+        "Apolinario, Gabriele Jade T.",
+        "Tan, Cristel Jade DS."
+      ],
+      "advisers": [
+        "Clairizza V. Arcillas"
+      ],
+      "panelists": [
+        "Precious T. Opinion",
+        "Fe Grace T. Cañedo",
+        "Louie Virgil A. Gallardo"
+      ],
+      "keywords": [
+        "Course Demand",
+        "Student Management",
+        "Graduate Programs",
+        "Prospectus Management",
+        "Academic Records"
+      ],
+      "approval_image": "T2.jpg",
+      "abstract": "Graduate school coordinators encounter difficulties in monitoring student academic progress, validating study plans, and determining course demand due to the reliance on manual processes and scattered data sources. These challenges may lead to delays, and difficulty in planning course offerings. This study aimed to develop a Course Demand and Student Management System for Ateneo de Zamboanga University Graduate Programs to support graduate school coordinators in managing student academic records and generating course demand reports.\n\nThe system was developed using a web based architecture and followed the Incremental Development Model to ensure systematic development and testing of each module. Technologies such as Laravel were used for the backend, MySQL for database management, and Tailwind CSS for the user interface were utilized to implement the system functionalities. The developed system allows admins, coordinators, and students to manage academic information through modules such as user account management, prospectus management, student management, study plan submission, and automated course demand generation. It also allows coordinators to monitor student progress, identify remaining course requirements, and generate reports that support academic planning. The system was evaluated by actual users and beta testing showed that most respondents strongly agreed that the system is easy to use, understandable, and helpful in managing academic information.\n\nOverall, the results indicate that the proposed system is functional and capable of helping graduate school coordinators in monitoring student's academic progress and course demand planning within the organization.",
+      "recommendations": "To ensure the effectiveness of the Course Demand and Student Management System, several recommendations are proposed for maintenance, integration, and future improvements. The system may be integrated with the local Graduate School system in the future for a more centralized platform for managing graduate student records and academic processes. In addition further normalization of the central database could be considered to improve data organization and make data retrieval more efficient.\n\nPrior to deployment, it is recommended that a training and system orientation be conducted for coordinators and administrators so that users can better understand the system's features.\n\nFor maintenance regular backups and routine software updates may also be performed to address potential issues and maintain compatibility with new technologies.\n\nFuture improvements to the system may include the development of a file reading feature that allows administrators to upload a PDF version of the program prospectus instead of manually encoding it allowing the system to automatically extract the required course information. The use of artificial intelligence or advanced algorithms may also be considered for more complex and accurate course demand projections based on student progress patterns. The system could also be expanded to support more departments within the university such as the School of Medicine (SOM) and the College of Law (COL). Lastly, adding mobile support is also recommended to enable students and coordinators to access the system more conveniently through their mobile devices."
+    },
+    {
+      "ref": "T3",
+      "title": "Web-Based Student Violation Management System for the Office of Student Affairs in the Higher Education Unit of Ateneo de Zamboanga University",
+      "program": "Bachelor of Science in Information Technology",
+      "year": 2026,
+      "authors": [
+        "Caga-anan, Matthew Carlo M.",
+        "Napao, Rufia Gerylle D."
+      ],
+      "advisers": [
+        "Fe Grace T. Cañedo"
+      ],
+      "panelists": [
+        "Maureen Olive B. Gallardo",
+        "Clairizza V. Arcillas",
+        "Precious T. Opinion"
+      ],
+      "keywords": [
+        "Student Violation Management",
+        "Office of Student Affairs",
+        "Disciplinary Records",
+        "Role-Based Access",
+        "Web-Based System"
+      ],
+      "approval_image": "T3.jpg",
+      "abstract": "This study presents the development and implementation of a Web-based Student Violation Management System for the Office of Student Affairs in the Higher Education Unit of Ateneo de Zamboanga University. The system aims to improve the manual process of recording and monitoring student violations by providing a centralized platform for violation tracking, policy management, and reporting. Key features of the system include the submission of violation report requests, monitoring of student violations through a structured timeline, automated report generation, policy management, and email notifications to keep students informed of their violation status. The platform also supports real-time updates, role-based access control, and secure user authentication to ensure data integrity and confidentiality. To enhance usability, the system provides a user-friendly interface with features such as standardized date formatting and a dark mode option. The system was developed using modern web technologies, including HTML, CSS, and JavaScript for the front-end, PHP for server-side scripting, and MySQL for database management. These technologies were selected to ensure system accessibility, scalability, and efficient data handling. A structured software development approach was followed, and the system underwent pre-completion testing with OSA staff and selected users. Feedback indicated that the system is easy to navigate and effectively meets its intended purpose, with recommended interface improvements incorporated into the final version. Results from system testing and evaluation indicate that the platform is functional, reliable, and easy to navigate. Users reported improved efficiency in processing violation-related tasks, reduced administrative workload, and better organization of records. Overall, the Web-Based Student Violation Management System provides an efficient, reliable, and accessible solution for managing student disciplinary records. It enhances transparency, reduces administrative workload, and improves communication between stakeholders, contributing to a more organized and effective violation management process.",
+      "recommendations": "For future improvements, additional features may be considered to further enhance the system's efficiency, usability, and overall effectiveness. These include the development of an SMS Notification feature that can send violation updates through text messages, ensuring that students still receive important notifications even in offline situations.\n\nThe system may also be integrated with the clearance module of the MyADZU Portal, allowing violation status to be automatically reflected in a student's clearance records. This ensures that students with unresolved or accumulating violations are flagged in real time, preventing clearance approval until all required sanctions, penalties, or resolutions have been completed and verified by the Office of Student Affairs.\n\nAnother possible enhancement is the inclusion of a Director Role with specific privileges for reviewing and confirming major violation cases. This role can serve as an additional layer of validation for serious cases, helping strengthen decision-making and accountability within the system.\n\nThese improvements can help keep the system effective, adaptable, and able to meet users' needs over time."
+    },
+    {
+      "ref": "T4",
+      "title": "Centralized Web Based System of Student Case Record, Counseling Record, and Medical Record for the Office of the Prefect of Discipline, Infirmary, and Guidance Counseling Office at Ateneo de Zamboanga University Senior High School",
+      "program": "Bachelor of Science in Information Technology",
+      "year": 2026,
+      "authors": [
+        "Tan, Angelica J.",
+        "Yusop, Din Iyashimeer K."
+      ],
+      "advisers": [
+        "Fe Grace T. Cañedo"
+      ],
+      "panelists": [
+        "Precious T. Opinion",
+        "Jessica D. Partosa",
+        "Aleekhazer J. Jausan"
+      ],
+      "keywords": [
+        "Student Records",
+        "Counseling Records",
+        "Medical Records",
+        "Centralized System",
+        "Role-Based Access"
+      ],
+      "approval_image": "T4.jpg",
+      "abstract": "Educational institutions manage large amounts of student-related information that must be organized, accurate, and accessible to support effective decision-making and student welfare. At Ateneo de Zamboanga University Senior High School (ADZU SHS), the Office of the Prefect of Discipline (OPD), the Guidance Counseling Office (GCO), and the Infirmary manage disciplinary cases, counseling records, and medical records respectively. However, the existing process relied heavily on manual methods such as physical documents, Excel files, telephone calls, and personal visits between offices. These practices led to delays in retrieving information, difficulties in verifying student records, and inefficiencies in communication among offices.\n\nThis study proposed the development of a Centralized Web-Based System for Student Case Records, Counseling Records, and Medical Records that integrated the operations of the OPD, GCO, and Infirmary into a single platform. The system enabled authorized personnel to securely input, access, update, and share relevant student data in real-time while maintaining confidentiality through role-based access control. Key features included case record management, counseling and medical record management, referral processing, file upload and download, student search functionality, and real-time notification systems.\n\nThe proposed system was designed using modern web technologies including Node.js, React.js, and MySQL to ensure efficient data management, scalability, and security. By digitizing and centralizing student records, the system reduced reliance on manual processes, improved coordination among offices, and facilitated faster verification of student information. Ultimately, the system enhanced institutional efficiency and supported better management of student disciplinary cases, counseling, and medical concerns at ADZU SHS.",
+      "recommendations": "Based on the feedback gathered during system testing, the overall evaluation showed that the system performed effectively and met its intended objectives. However, the users suggested additional features that could enhance the system's capabilities and support daily operations more efficiently. These recommendations include the following:\n\n- Integrate Google Calendar into the system to improve the scheduling and management of counseling sessions.\n- Expand the Infirmary medical record module to function as a more comprehensive medical record system rather than only allowing the input of student medical conditions.\n- Include the Admin Office in the system to support additional administrative oversight and coordination.\n- Include the types of services provided by the GCO in the counseling module to help the GCO track and record the services provided to students.\n- Expand the system from a Senior High School to a university-wide system.\n- Include additional offices, such as the Office of Student Affairs (OSA), to broaden system coverage and functionality.\n- Integrate and support the involvement of students' parents within the system.\n\nImplementing these recommendations in future system updates can further enhance usability, improve record management, and support better coordination between the OPD, GCO, Infirmary, and other administrative offices. Continuous evaluation and improvement of the system are also recommended to ensure that it remains effective and aligned with the needs of the organization."
+    },
+    {
+      "ref": "T5",
+      "title": "Web-Based Human Resource Information System for LM Metro Hotel",
+      "program": "Bachelor of Science in Information Technology",
+      "year": 2026,
+      "authors": [
+        "Robeta, Gwyne Rose G.",
+        "Cariit, Curt Ryan C."
+      ],
+      "advisers": [
+        "Fe Grace T. Cañedo"
+      ],
+      "panelists": [
+        "Giosimon P. Dimaculangan",
+        "Geoffrey M. Fabian",
+        "Clairizza V. Arcillas"
+      ],
+      "keywords": [
+        "Human Resource Information System",
+        "Hospitality",
+        "Employee Profiling",
+        "Attendance Integration",
+        "Laravel"
+      ],
+      "approval_image": "T5.jpg",
+      "abstract": "Managing human resource operations in a hospitality environment often involves fragmented employee records, manual documentation, and disconnected coordination between HR personnel and department supervisors, making it difficult to track employee profiles, monitor probationary periods and contract timelines, document incident reports, and maintain consistent performance evaluation records. To address these challenges, this study designed and developed a web-based Human Resource Information System for LM Metro Hotel, a hospitality establishment managing approximately 150 to 160 employees. The system was developed using the Laravel 12 framework with a MySQL database, following an iterative approach with continuous consultation from stakeholders, and implemented as a role-based web platform serving HR personnel and department supervisors. Key modules include employee profiling consolidating personal information and employment details; attendance viewing with API-based integration from the existing biometric system; incident reporting enabling supervisor submissions and HR sanction documentation; digital evaluation with configurable forms; and contract and probationary monitoring generating automated notifications. System functionality was validated through alpha and beta testing with actual end-users, including an HR Generalist and department supervisors. Evaluation results based on usability, interface design, efficiency, functionality, and user satisfaction demonstrate that the system is intuitive, well-organized, and effective in supporting HR processes. The system successfully consolidates fragmented records, digitizes manual processes, automates timeline monitoring, and enhances coordination between HR personnel and supervisors, serving as a reliable platform for human resource management within the organization.",
+      "recommendations": "To ensure the continued effectiveness and long-term sustainability of the Web-Based Human Resource Information System for LM Metro Hotel, several recommendations are proposed for deployment, maintenance, integration, and future improvements.\n\n4.2.1 Deployment and Organizational Adoption. Prior to full deployment, a comprehensive training and system orientation should be conducted for all system users, with hands-on practice sessions in a controlled environment. A phased implementation is recommended to minimize disruption: the initial phase migrates existing employee records from physical 201 files and spreadsheets through the legacy employee import process; the second phase introduces supervisors to schedule management, incident reporting, and evaluation while maintaining parallel manual processes as backup; the final phase transitions all HR operations to the system once proficiency and reliability are confirmed.\n\n4.2.2 System Maintenance and Data Integrity. Regular backups should be performed by the IT Department and stored separately from production (daily incremental and weekly full backups retained for at least thirty days and tested periodically). Quarterly security audits should review user accounts, access permissions, and system logs; separated employees' accounts should be deactivated promptly; password policies should enforce complexity; and the Laravel framework, PHP runtime, MySQL database, and server OS should be kept current with updates tested in a staging environment first. A maintenance log (covering perfective maintenance, preventive maintenance, and version history) should be stored within the HRIS or a secured repository and reviewed quarterly alongside a roadmap of planned enhancements for the next 12 to 24 months. [NOTE: source scan is missing page 182, so part of subsection 4.2.2 is omitted.]\n\n4.2.3 Hardware and Infrastructure Recommendations. The hardware identified in the requirements specification should be maintained. The dedicated server hosting the HRIS should be protected by an Uninterruptible Power Supply, and network connectivity should be monitored so scheduled API attendance retrieval executes reliably every 15 minutes. Client devices used by HR personnel and supervisors should meet the minimum specifications.\n\n4.2.4 Policy and Procedural Recommendations. The implementation should be supported by updated organizational policies reflecting the new digital workflows, including a formal data privacy policy that grants access only to authorized personnel based on their roles and allows disciplinary action against out-of-scope access. Procedural guidelines should be developed for each module, documented in a user manual, and made accessible to all users.\n\n4.2.5 Recommendations for Future Enhancements. Several features outside the project scope could enhance the system, such as Mobile Application Development (dedicated native iOS and Android applications providing offline capabilities, push notifications for critical alerts, and optimized touch interfaces for on-site tasks like incident reporting and attendance verification).\n\n4.2.6 Long-term Sustainability. Responsibility for system administration should be assigned to a designated IT personnel or HR staff member with technical expertise who receives comprehensive training on system configuration, user management, backup procedures, and troubleshooting. Regular user feedback sessions should be conducted, and a formal annual system review should evaluate system performance, user satisfaction, data accuracy, and compliance with changing labor regulations. By implementing these recommendations, LM Metro Hotel can maximize the benefits of the system, maintain system integrity over time, and establish a foundation for continuous improvement."
+    },
+    {
+      "ref": "T6",
+      "title": "Online Room and Venue Reservation System for Ateneo de Zamboanga University Lantaka Campus",
+      "program": "Bachelor of Science in Information Technology",
+      "year": 2026,
+      "authors": [
+        "Patiño, Kenneth G.",
+        "Bruan, Vem Kenji O."
+      ],
+      "advisers": [
+        "Precious T. Opinion"
+      ],
+      "panelists": [
+        "Jessica D. Partosa",
+        "Maureen Olive B. Gallardo",
+        "Clairizza V. Arcillas"
+      ],
+      "keywords": [
+        "online room",
+        "venue reservation system",
+        "ADZU Lantaka Campus",
+        "Laravel (PHP)",
+        "JavaScript",
+        "CSS",
+        "PostgreSQL",
+        "Laravel Cloud"
+      ],
+      "approval_image": "T6.jpg",
+      "abstract": "The management of room and venue reservations requires a streamlined and efficient process to accommodate the diverse needs of university organizations and external agencies. This capstone project focuses on the development and implementation of an Online Room and Venue Reservation System for the Ateneo de Zamboanga University (ADZU) Lantaka Campus. To ensure system efficiency and to address specific administrative workflows, the platform integrates features for tracking internal charging and sponsored office allocations. Crucially, to prioritize data security and prevent potential breaches, the project scope strictly limits the system to reservation record-keeping and explicitly excludes online payment processing. The system was then developed utilizing the Agile methodology, allowing for iterative enhancements and the continuous integration of client feedback throughout the development lifecycle. The technical infrastructure was built using: Laravel (PHP) for the backend framework, JavaScript and CSS for the user interface, and PostgreSQL for secure database management, with the entire application hosted via Laravel Cloud. The system enables administrators to manage reservations, track internal charging and sponsored office allocations, and generate reservation records efficiently. The resulting system supports improved accessibility, streamlined reservation processing, and better coordination of facility usage. It also minimizes scheduling conflicts and enhances accuracy in reservation record-keeping. To maintain system security and limit potential vulnerabilities, the platform is designed strictly for reservation management and does not include online payment processing. Overall, the system provides a reliable and scalable solution that contributes to the modernization of facility management processes at the ADZU Lantaka Campus.",
+      "recommendations": "To ensure its long-term success, the Lantaka Online Reservation System must be fully integrated into the Lantaka Campus's daily operations. This platform serves as a centralized hub for managing room, venue, and food bookings, making it essential to establish a Standard Operating Procedure (SOP) for digital record-keeping. Proper onboarding and training sessions for all current and future staff members are highly recommended to maximize the system's utility and make it more accessible to the administrators, internal university clients, and external stakeholders.\n\nThe main goal of maintaining the Lantaka system is to continuously modernize and enhance how the ADZU Lantaka Campus manages its facility operations. The system aims to permanently replace traditional, paper-reliant methods of reservation tracking and manual billing computation with a more secure and efficient digital workflow. This sustained transition aligns with the broader movement of digital transformation within the university, utilizing technology to improve administrative service and the overall user experience.\n\nThe objectives set for future iterations of the system should focus on developing additional key modules that further expand the campus's technological capabilities. These proposed enhancements include mobile application integration, an AI-powered chatbot for real-time inquiries, automated SMS notifications for booking updates, and a potential online payment gateway, should university policies allow. Each proposed module is designed to ensure that the campus's online reservation presence remains dynamic, responsive, and easy to navigate."
+    },
+    {
+      "ref": "T7",
+      "title": "Multi-Model Voting System for Distinguishing AI-Generated vs Human-Created Realism-Style Digital Landscape Paintings",
+      "program": "Bachelor of Science in Computer Science",
+      "year": 2026,
+      "authors": [
+        "Chiong, Josh Rafael B.",
+        "Palma, Rasheed"
+      ],
+      "advisers": [
+        "Maureen Olive B. Gallardo"
+      ],
+      "panelists": [
+        "Aleekhazer J. Jausan",
+        "Louie Virgil A. Gallardo",
+        "Jasser Arabani T. Dawabi"
+      ],
+      "keywords": [
+        "multi-model voting system",
+        "digital landscape paintings",
+        "generative artificial intelligence tools",
+        "human-created realism-style"
+      ],
+      "approval_image": "T7.jpg",
+      "abstract": "This study presents a Multi-Model Voting System to distinguish AI-generated from human-created realism-style digital landscape paintings. With the increasing use of generative artificial intelligence tools, accurately identifying AI-generated artwork has become a significant challenge. To address this, a dataset of 15,000 images was constructed, consisting of 7,500 AI-generated and 7,500 human-created landscape paintings collected from various platforms, including Lexica, DALL-E, Stable Diffusion, ArtStation, and DeviantArt. Images were verified to the extent possible using metadata, source information, and manual inspection to ensure data integrity. Three classification models were implemented: ResNet-50, Vision Transformer (ViT), and Random Forest. ResNet-50 and ViT were utilized to learn deep visual representations from images, while Random Forest employed engineered features such as color histograms, texture descriptors, and edge density. A soft voting ensemble approach was applied to combine the probabilistic outputs of the three models. Experimental results show that the Ensemble Model achieved the highest overall performance, with an accuracy of 95.20%, followed by ResNet-50 (94.53%) and Vision Transformer (94.00%), while Random Forest obtained an accuracy of 89.02%. The ensemble approach also demonstrated balanced precision, recall, and F1-score, indicating improved reliability in classification. These findings suggest that combining traditional machine learning and deep learning models enhances classification performance by leveraging complementary strengths. Overall, the proposed system provides a robust and effective approach for distinguishing AI-generated from human-created realism-style digital landscape paintings within the scope of this study.",
+      "recommendations": "The results of the study demonstrate strong system performance; however, several areas can still be improved to enhance the model's effectiveness and support future research in AI-generated image detection.\n\nOne key recommendation is the expansion of the dataset. Although this study utilized 15,000 images, the rapid advancement of generative AI technologies continues to introduce new image generation techniques. Increasing the size and diversity of the dataset, including a wider range of artistic styles and outputs from different generative models, can improve the system's generalization capability and robustness.\n\nIn addition, future work may explore alternative deep learning architectures beyond ResNet-50 and Vision Transformer. Models such as EfficientNet and Swin Transformer, as well as hybrid CNN-transformer approaches, have shown strong performance in visual recognition tasks (Tan & Le, 2019; Liu et al., 2021) and may further enhance classification accuracy.\n\nAnother possible improvement is the integration of multi-modal analysis. Instead of relying solely on visual features, future systems can incorporate metadata such as image generation prompts, embedded file information, and other digital signatures. This approach can provide additional evidence for distinguishing AI-generated images from human-created artworks.\n\nFinally, the system can be evaluated across a broader range of artistic styles beyond realism landscapes. Testing the model on portrait paintings, abstract art, and illustration-based images would allow for a more comprehensive assessment of its applicability. Expanding the classification domain may improve the system's adaptability to real-world scenarios."
+    },
+    {
+      "ref": "T8",
+      "title": "KHandvas: A Hand Gesture Based Digital Art Program with Pen Pressure Simulation",
+      "program": "Bachelor of Science in Computer Science",
+      "year": 2026,
+      "authors": [
+        "Royupa, Emmanuelle March S.",
+        "Yeo, Chloe C."
+      ],
+      "advisers": [
+        "Randy V. Pinaguiton"
+      ],
+      "panelists": [
+        "Jasser Arabani T. Dawabi",
+        "Carl Joseph C. Jaldon",
+        "Louie Virgil A. Gallardo"
+      ],
+      "keywords": [
+        "pen pressure simulation",
+        "hand gesture",
+        "computer vision",
+        "MediaPipe",
+        "digital art",
+        "Unity"
+      ],
+      "approval_image": "T8.jpg",
+      "abstract": "MediaPipe and OpenCV are computer vision techniques that have been used in studies that utilized hand landmark data as input to draw with brush sizes of a consistent size on a digital canvas for conducting quick visual aids in online meetings and educational purposes. While previous studies have explored hand tracking and gesture-based drawing, and other methods to simulate pen pressure or vision-based pressure estimation, there is limited evidence of research combining these ideas.\n\nA proof-of-concept application, KHandvas, was developed to explore the potential of simulating pen pressure using the hand's relative distance from the camera. It utilizes a webcam and computer vision techniques, OpenCV and MediaPipe, for hand recognition to transform continuous values (hand relative distance) into discrete pressure levels. The system was implemented in Unity, which renders the digital canvas and dynamically updates brush strokes in real time, enabling responsive and interactive drawing.\n\nResults showed that response times were within the target range (i7: ~70.98 ms, i5: ~97.34 ms), supporting low-latency, real-time interactions. MediaPipe accurately detected hand landmarks and gestures, ensuring seamless UI navigation and brush control. In quantitative analysis, both devices revealed a high average stroke stability score of 94.63%, and an average variation consistency score of 100% on both devices. Stroke continuity had an average score of 93.94%, particularly in non-fast-paced drawing. In timed test cases, lower continuity passing rates were observed during rapid hand movements such as 66.02% for the i7 and 71.17% for the i5; these were attributed to camera frame-rate limitations and motion blur. Yet, qualitative inspection confirmed visually continuous strokes at average continuity scores of approximately 68% and above.\n\nThese findings demonstrate that a webcam-based hand tracking system can reliably simulate pen pressure, enabling responsive, stable, and expressive digital drawing interactions using only a standard camera and computer vision techniques.",
+      "recommendations": "Based on the findings of this study, KHandvas demonstrates the feasibility of camera-based hand tracking for pressure-sensitive digital drawing, providing an alternative solution to simulate pen pressure in digital art creation. The following are recommended improvements and future research directions to enhance the system's performance and usability:\n\n1. Use of Higher Frame-Rate Cameras. Future implementations may utilize cameras with frame rates higher than 30fps to reduce motion blur and improve hand landmark detection during rapid movements, addressing the observed decrease in continuity scores in high-speed test cases.\n\n2. GPU Based Rendering. Future implementations may utilize GPU-based rendering when painting on render textures to improve performance and reduce processing time during brush stroke rendering.\n\n3. User Testing and Usability Evaluation. Future studies should conduct user testing with participants of varying experience levels to evaluate the system's usability, learning curve, and effectiveness compared to traditional input devices.\n\n4. Enhanced Data Logging and Stroke Recording Mechanism. The current system does not automatically save a PNG image after completing a brush stroke, which may lead to data loss for analysis. Future versions should implement a more robust logging mechanism that automatically saves each completed brush stroke, improving the accuracy of quantitative analysis.\n\n5. Improved UI Navigation and Expanded Gesture Recognition. The current system is limited in its ability to navigate the user interface effectively, as it relies on a fixed window size of 1106 x 622. Additional gestures may be incorporated to support more advanced interactions, such as zooming, rotating, panning or flipping the canvas, or adjusting brush properties.\n\n6. User Practice or Training. The system introduces an alternative drawing method that differs from the conventional use of a pen or stylus on a flat surface. Users are encouraged to undergo sufficient practice to familiarize themselves with the system's behavior, particularly in terms of timing and responsiveness, to develop the necessary motor coordination and spatial awareness for controlled movement along the x, y, and z axes."
+    },
+    {
+      "ref": "T9",
+      "title": "PetConnect: A Web-Based Platform for Discovering and Booking Pet Grooming Services in Zamboanga City",
+      "program": "Bachelor of Science in Information Technology",
+      "year": 2026,
+      "authors": [
+        "Ong Chua, Nurico Jay V.",
+        "Valeros, Robert E."
+      ],
+      "advisers": [
+        "Precious T. Opinion"
+      ],
+      "panelists": [
+        "Fe Grace T. Cañedo",
+        "Jessica D. Partosa",
+        "Clairizza V. Arcillas"
+      ],
+      "keywords": [
+        "pet grooming services",
+        "booking platform",
+        "Zamboanga City",
+        "service discovery",
+        "web-based system"
+      ],
+      "approval_image": "T9.jpg",
+      "abstract": "The growing number of pet owners in Zamboanga City has increased the demand for accessible and reliable pet grooming services. However, pet owners often encounter difficulties in locating trusted service providers due to scattered information, unclear service details, and the limited online visibility of local businesses. This study developed PetConnect, a web-based platform designed to help pet owners discover and book pet grooming services while enabling service providers to manage their business profiles and appointments through a centralized system.\n\nThe system was developed based on data gathered from surveys conducted among pet owners and pet service providers in Zamboanga City. The findings revealed that many pet owners experience difficulty finding nearby services, comparing providers, and confirming service availability. In response to these challenges, the PetConnect platform integrates features such as groomer profile management, map-based service discovery, customized filtering, online booking, payment proof submission, and review and feedback mechanisms.\n\nTo evaluate the system, alpha testing was conducted internally to verify system functionality and integration, while beta testing involved twenty-three participants consisting of one administrator, ten pet groomers, and twelve pet owners. Structured test cases were used to assess core platform operations including account registration, service discovery, booking management, and review submission. The results indicated that the system performed according to the expected outcomes and that users were able to complete the assigned tasks successfully. Overall, the PetConnect platform demonstrates that a centralized web-based system can improve the accessibility and management of pet grooming services while supporting service providers in reaching potential clients within the local pet service community in Zamboanga City.",
+      "recommendations": "To improve the overall performance and usability of the PetConnect platform, several recommendations are proposed based on the results of system testing. First, a clear refund and cancellation policy should be established and prominently displayed within the platform, particularly for bookings made on the same date and time. This policy should outline the conditions under which cancellations are accepted, the timeframe for refund processing, and any applicable fees. Having a well-defined policy will help manage user expectations and reduce potential disputes between pet owners and service providers.\n\nSecond, account verification should be strengthened by requiring business owners to submit a self-portrait photograph, commonly referred to as a \"selfie,\" during the registration process. This photo-based verification, in which the registrant captures an image of their own face using their device's camera, adds an additional layer of authenticity and helps ensure that individuals registering as service providers are legitimate and identifiable business owners.\n\nThird, additional usability testing is recommended as the system evolves. Continuous feedback from users can help identify further interface issues and ensure that the platform remains easy to use for both pet owners and pet groomers.\n\nFourth, regular system maintenance should be implemented to ensure system stability and data reliability. This includes routine database backups, system monitoring, and periodic updates to maintain performance and security.\n\nFifth, future enhancements may focus on expanding system accessibility and functionality. Improvements such as mobile optimization, real-time location features, and integrated payment processing can further enhance the overall user experience.\n\nSixth, the system may be expanded to include additional pet-related services beyond grooming, such as veterinary services, pet boarding, or pet supply listings. This expansion can increase the platform's usefulness and support a wider range of users within the community."
+    },
+    {
+      "ref": "T10",
+      "title": "Exploring the Applications of Simplex Noise in Procedural Open-World Biome Generation",
+      "program": "Bachelor of Science in Computer Science",
+      "year": 2026,
+      "authors": [
+        "Orillineda, Anton John A.",
+        "Simyunn, Jan Ryan R."
+      ],
+      "advisers": [
+        "Jasser Arabani T. Dawabi"
+      ],
+      "panelists": [
+        "Precious T. Opinion",
+        "Jessica D. Partosa",
+        "Kreanne F. Diaz"
+      ],
+      "keywords": [
+        "Simplex noise",
+        "procedural generation",
+        "biome generation",
+        "Perlin noise",
+        "Godot",
+        "open-world"
+      ],
+      "approval_image": "T10.jpg",
+      "abstract": "Perlin noise is the industry-standard noise algorithm utilized in procedural content generation. Despite its popularity, it suffers from two primary technical limitations: O(2^N) time complexity and significant visual artifacts. While Simplex noise, with its O(N) complexity and decreased visual artifacts, is theoretically superior, comprehensive benchmarks within integrated multi-variable pipelines remain limited. This research addresses these gaps by conducting a technical performance evaluation and exploration of Simplex noise within a procedural multi-variable biome generation pipeline.\n\nA Simplex noise plugin was developed for Godot v4.3 to facilitate a comparative analysis against Perlin noise in 3D procedural environments. Performance was benchmarked via initial generation time (ms) and real-time frame rates (FPS) across different configurations. Additionally, this study introduces a framework for evaluating the visual quality of textures by quantifying visual artifacts. Inspired by Short-Time Fourier Transform (STFT) principles, this methodology calculates the Anisotropy Index of the entire texture (Overall Anisotropy Evaluation) and for each segment of the texture (Divided Anisotropy Evaluation). This approach allows for the distinct quantification of rotational asymmetry and localized grid artifacts, respectively.\n\nResults indicate that Simplex noise has practical applications in scenarios where better 2D scaling, real-time performance, and less grid artifacting are valued, with Perlin noise benefiting from native engine integration in initial generation times. Ultimately, the results demonstrated Simplex noise being a suitable noise algorithm for the domain of procedural open-world biome generation, as well as a viable alternative to Perlin noise.",
+      "recommendations": "In conducting this study, the researchers took note of several recommendations that would benefit future research. While the theoretical advantages of Simplex noise have been validated in this study, it also highlights the importance of engine-level integration on empirical performance. Additionally, the methodology adopted in this study for quantifying visual artifacts as a measure for visual quality of noise maps provides a foundation for future research that integrates more rigorous evaluations of noise functions. Due to time constraints, as well as to provide more thorough and better-representing evaluations for noise maps in procedural content generation, the following recommendations are offered.\n\n1. Core-Level Engine Integration. The Godot game engine is considered open source and is under the MIT license. Future researchers should consider implementing Simplex noise on the core level of the engine. One method to accomplish this may be to implement Simplex noise as another noise type of FastNoiseLite, which would, in theory, render more representative performance benchmarks for Simplex.\n\n2. Evaluation of OpenSimplex. Apart from Perlin noise, OpenSimplex and its iterations also find prevalent use in procedural content generation. This noise algorithm was created to circumvent legal stipulations that prohibited Simplex noise from being used commercially up until 2022. The comparative analysis discussed in this methodology can be used as a framework to evaluate OpenSimplex and its iterations on Simplex, Perlin, and other noise functions.\n\n3. Expansion on the Anisotropy Index Metric. The Anisotropy Index Metric, alongside the Overall Anisotropy Evaluation (OAE) and Divided Anisotropy Evaluation (DAE) methodologies, may serve as the foundation for more rigorous and standardized evaluations for the visual quality of textures. Future researchers are also suggested to augment these metrics with the stochastic evaluation framework proposed by Lagae et. al. (2010) in quantifying visual artifacts within a given noise map.\n\n4. Complete World Generation Pipeline. The study focused on climate maps and biomes, which only affect the terrain surface. The procedural biome generation pipeline may be expanded to include underground structures, more complex landforms, water bodies, and other elements of a complete world. This would result in more aspects that utilize multidimensional noise maps whose performances and visual quality may be benchmarked. In addition, most games utilize world chunks to improve performance by only rendering a limited number of segments of a larger-scale world. Expanding the pipeline to include and evaluate the algorithms within this process would help in providing performance results most applicable to open-world games specifically."
+    },
+    {
+      "ref": "T11",
+      "title": "Comparison of YOLOv8, YOLO-NAS, and YOLO11 for Real-Time Filipino Sign Language Recognition on Mobile Devices",
+      "program": "Bachelor of Science in Computer Science",
+      "year": 2026,
+      "authors": [
+        "Aquino, Nathanielle Dae B.",
+        "Lim, Jan Eriko A."
+      ],
+      "advisers": [
+        "Jasser Arabani T. Dawabi"
+      ],
+      "panelists": [
+        "Aleekhazer J. Jausan",
+        "Precious T. Opinion",
+        "Eugene S. Kanindot"
+      ],
+      "keywords": [
+        "Filipino Sign Language (FSL)",
+        "sign language recognition",
+        "object detection",
+        "YOLO models",
+        "mobile deployment",
+        "TensorFlow Lite"
+      ],
+      "approval_image": "T11.jpg",
+      "abstract": "Sign language recognition is a way to address the communication gap for deaf and hard-of-hearing individuals. Filipino Sign Language (FSL), used in the Philippines, is utilized by approximately 1.6 percent of the population for communication. While studies on FSL have been conducted over the past five years, there are notable limitations such as the scope of FSL signs being recognized, using neural networks with temporal memory, and lack of recognition systems deployed to mobile phones. This study aimed to develop and evaluate object detection models for recognizing static handshapes of the FSL alphabet using different YOLO-based architectures. A novel image dataset was created consisting of 27 FSL alphabet signs, with static signs represented as a single image and dynamic signs represented as five sequential frames. The models were trained for 100 epochs and evaluated on both controlled and real-world test sets using precision, recall, F1-score, and mAP@50. The best-performing variants were converted to TensorFlow Lite and deployed on Samsung Galaxy S20 FE and S25 Ultra devices to measure inference speed and accuracy preservation. Results showed that YOLO-NAS achieved the highest accuracy in the PyTorch model but suffered significant degradation after TFLite conversion, making it unsuitable for deployment. In contrast, YOLOv8 and YOLO11 preserved accuracy with minimal loss. On mobile devices, YOLO11 had the fastest inference speed and the smallest file size, while YOLOv8 offered better stability on mid-range hardware. Therefore, YOLO11 is recommended as the optimal model for real-time FSL recognition, as it balances high accuracy, efficient deployment, and real-time performance across Android devices.",
+      "recommendations": "The listed recommendations aim to address the study's limitations, improve the general capability of recognizing FSL alphabet signs, and explore more diverse parts of Filipino Sign Language recognition studies. The following are the key recommendations derived from this study:\n\n6.2.1 Optimizing one YOLO model for Deployment. Rather than concentrating on only one YOLO variant, more effort and resources can be focused on improving the training strategies and adjusting hyperparameters of a chosen model to achieve better system stability and detection accuracy. YOLO-NAS achieved high recall and mAP@50 but had very low precision and F1-score, suggesting that many predicted detections were incorrect; fine-tuning YOLO-NAS hyperparameters, adjusting detection thresholds, and increasing training epochs may improve its ability to distinguish correct and incorrect detections. The mobile deployment pipeline is also recommended (models initially trained in PyTorch and later converted for deployment using TensorFlow Lite), and future studies may improve the conversion process and optimize the model through pruning and hardware acceleration.\n\n6.2.2 Expansion and Modification of the Dataset. The study used a total of 7,851 images, which is significantly smaller than other sign language recognition studies that have used larger quantities of images. It is highly recommended to increase this quantity (there were 5 participant signers for this dataset signing the FSL alphabet 10 times each) to improve accuracy and speed and to add variation to the whole dataset in terms of handshape and skin tone of the signer. The dataset was initially captured with a green screen background at a distance of 1m from the camera in a controlled environment; future studies should explore varying backgrounds, angles, lighting conditions, and camera distance, and include a group of signers with variations in skin tones and handshapes to improve recognition under different and changing conditions.\n\n6.2.3 Additions for Sign Language Recognition Application. The following points can be explored for future work to broaden the accessibility and usability of the recognition application in real-world scenarios: (a) Deployment to Other Platforms, converting the trained model into an iOS-compatible format using TensorFlow Lite so recognition can run directly on iOS devices; (b) Integration of Live Camera Feed Recognition, enabling real-time detection from a live camera feed, which the current build could not yet perform; (c) Detection of Additional Signers, extending recognition beyond one signer per image to multiple signers; (d) Potential Feature for Fingerspelling, Word and Phrases Recognition, adding temporal memory or a tracking mechanism so the model can identify fingerspelled words and unique Filipino Sign Language words and phrases, not just static letters; and (e) Mobile Device Stress Testing Consideration, stress-testing the application on mobile devices under prolonged and normal use to assess performance, battery consumption, memory usage, and accuracy degradation over time across a wider range of device specifications."
+    },
+    {
+      "ref": "T12",
+      "title": "Special Programs Registrar System for Ateneo de Zamboanga University School of Education",
+      "program": "Bachelor of Science in Information Technology",
+      "year": 2026,
+      "authors": [
+        "Acacio, Darren James B.",
+        "Saavedra, Joelle Larissa A."
+      ],
+      "advisers": [
+        "Jumar C. Roldan"
+      ],
+      "panelists": [
+        "Randy V. Panaguiton"
+      ],
+      "keywords": [
+        "Special Programs Registrar",
+        "School of Education",
+        "Registration System",
+        "Centralized System",
+        "Laravel"
+      ],
+      "approval_image": "T12.jpg",
+      "abstract": "The School of Education (SEd) Special Programs Registrar system is a web-based application that is developed to create a centralized, modern system for processing and storing information for the special programs under the School of Education of Ateneo de Zamboanga University (AdZU). The primary objective of the system is to digitize the registration process of the special programs under the AdZU SED and to provide a centralized way to store data on student information, student records, programs, curriculums, courses, class lists, instructors, and grades. The Special Programs Registrar system is a web-based application using the Laravel 12 framework, utilizing HTML5, Tailwind CSS 4.2.2, and JavaScript for front-end development. The system uses PHP 8.2.12, MySQL 5.7, and AJAX for database communication. Various tests were conducted to evaluate the functionality and performance of the Special Programs Registrar system. Testing includes checking for the correctness of the various modules, specifically the respective CRUD operations of each module of the system and observing how the frontend and backend interacted. Overall, this document discusses the design, modules, and functions of the Special Programs Registrar System for the AdZU SED and how it is meant to provide a digitized, modern, and centralized approach to processing and storing data of the registrar services of the special programs.",
+      "recommendations": "The system can be deployed once it receives approval from both the SED and the CITS. The system is to be presented to the SEd to check for any necessary changes they would like to make. Once the system is approved by the SEd, it can be deployed by the CITS for practical use should no further changes be needed and the system is deemed ready for deployment.\n\nAdditionally, key modules and functions suggested would be allowing the Program Information Module to track course prerequisites and enforce them as requirements for the courses following them; courses should also be allowed to be added into other modules from its own information page. Other suggestions include improvements to the color scheme of the UI, though this still needs to be checked with the SEd. The speed of the loading times of the system is also a suggested place for improvement."
+    }
+  ]
+}
