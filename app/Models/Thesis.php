@@ -144,6 +144,17 @@ class Thesis extends Model
     }
 
     /**
+     * Optional, multi-valued proofreaders (FR-4.x) — an empty relationship is a
+     * valid state (displayed as "N/A"), never a stored placeholder.
+     *
+     * @return HasMany<ThesisProofreader, $this>
+     */
+    public function proofreaders(): HasMany
+    {
+        return $this->hasMany(ThesisProofreader::class)->orderBy('position');
+    }
+
+    /**
      * @return HasMany<ThesisKeyword, $this>
      */
     public function keywords(): HasMany

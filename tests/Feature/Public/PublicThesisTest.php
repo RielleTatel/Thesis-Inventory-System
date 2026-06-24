@@ -161,6 +161,30 @@ class PublicThesisTest extends TestCase
         $this->get('/?q='.str_repeat('a', 200))->assertSessionHasErrors('q');
     }
 
+    public function test_detail_page_shows_proofreaders_in_order(): void
+    {
+        $thesis = $this->makeThesis(['title' => 'Proofread Thesis']);
+        $thesis->proofreaders()->create(['name' => 'Pat Reader', 'position' => 0]);
+        $thesis->proofreaders()->create(['name' => 'Sam Editor', 'position' => 1]);
+
+        $response = $this->get(route('public.thesis.show', $thesis))->assertOk();
+
+        $response->assertSee('Proofreader')->assertSee('Pat Reader')->assertSee('Sam Editor');
+        $response->assertSeeInOrder(['Pat Reader', 'Sam Editor']);
+    }
+
+    public function test_detail_page_shows_na_when_a_thesis_has_no_proofreaders(): void
+    {
+        // makeThesis attaches no proofreaders — an empty relationship reads "N/A"
+        // (display concern only; nothing is stored).
+        $thesis = $this->makeThesis(['title' => 'No Proofreaders Thesis']);
+
+        $this->get(route('public.thesis.show', $thesis))
+            ->assertOk()
+            ->assertSee('Proofreader')
+            ->assertSee('N/A');
+    }
+
     public function test_approval_page_route_streams_the_stored_image_inline(): void
     {
         Storage::fake('local');

@@ -45,6 +45,8 @@ class StoreThesisRequest extends FormRequest
             'advisers.*' => ['nullable', 'string', 'max:255'],
             'panelists' => ['array'],
             'panelists.*' => ['nullable', 'string', 'max:255'],
+            'proofreaders' => ['array'],
+            'proofreaders.*' => ['nullable', 'string', 'max:255'],
             'keywords' => ['array'],
             'keywords.*' => ['nullable', 'string', 'max:255'],
         ];
@@ -59,6 +61,7 @@ class StoreThesisRequest extends FormRequest
             'authors.*' => 'author',
             'advisers.*' => 'adviser',
             'panelists.*' => 'panelist',
+            'proofreaders.*' => 'proofreader',
             'keywords.*' => 'keyword',
         ];
     }

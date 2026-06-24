@@ -6,7 +6,7 @@ use App\Models\Thesis;
 
 /**
  * Shared logic for persisting the ordered multi-value rows
- * (authors, advisers, panelists, keywords) of a thesis.
+ * (authors, advisers, panelists, proofreaders, keywords) of a thesis.
  *
  * Each value becomes one row with a `position` reflecting its order in the
  * submitted list (coding standard #7). Blank entries are dropped and the
@@ -15,7 +15,7 @@ use App\Models\Thesis;
 trait SyncsOrderedThesisValues
 {
     /** @var list<string> */
-    private array $orderedRelations = ['authors', 'advisers', 'panelists', 'keywords'];
+    private array $orderedRelations = ['authors', 'advisers', 'panelists', 'proofreaders', 'keywords'];
 
     /**
      * Replace every ordered relation on the thesis from the given input data.

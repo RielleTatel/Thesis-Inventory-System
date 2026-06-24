@@ -28,7 +28,7 @@ class ThesisController extends Controller
 
     public function show(Thesis $thesis): View
     {
-        $thesis->load(['department', 'authors', 'advisers', 'panelists', 'keywords']);
+        $thesis->load(['department', 'authors', 'advisers', 'panelists', 'proofreaders', 'keywords']);
 
         return view('admin.thesis.show', ['thesis' => $thesis]);
     }

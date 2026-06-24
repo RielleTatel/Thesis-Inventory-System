@@ -7,6 +7,7 @@ browsable catalog of 12 Computer Science Department theses (AY 2025-2026).
 ## Contents
 - `thesis-data.json` - the 12 thesis records (title, program, year, authors,
   advisers, panelists, keywords, abstract, recommendations, approval image ref).
+  An optional `proofreaders` array may be added per record (missing/empty = none).
 - `approval-images/T1.jpg ... T12.jpg` - the scanned panel approval pages.
 
 ## How the seeder uses this

@@ -79,6 +79,103 @@ class DepartmentThesisTest extends TestCase
         $this->assertDatabaseHas('thesis_keywords', ['thesis_id' => $thesis->id, 'name' => 'nlp', 'position' => 1]);
     }
 
+    public function test_thesis_can_have_multiple_ordered_proofreaders(): void
+    {
+        $a = Department::factory()->create();
+
+        $this->actingAs($this->departmentUser($a))
+            ->post(route('department.theses.store'), [
+                'status' => 'published',
+                'title' => 'Thesis With Proofreaders',
+                'year' => 2024,
+                'program' => 'BS Computer Science',
+                'abstract' => 'A short abstract.',
+                'proofreaders' => ['Pat Reader', '', 'Sam Editor'], // blank dropped
+            ])
+            ->assertRedirect(route('department.theses.index'));
+
+        $thesis = Thesis::where('title', 'Thesis With Proofreaders')->firstOrFail();
+
+        // Blanks filtered, order preserved as 0-based positions (like the others).
+        $this->assertSame(['Pat Reader', 'Sam Editor'], $thesis->proofreaders()->pluck('name')->all());
+        $this->assertDatabaseHas('thesis_proofreaders', ['thesis_id' => $thesis->id, 'name' => 'Pat Reader', 'position' => 0]);
+        $this->assertDatabaseHas('thesis_proofreaders', ['thesis_id' => $thesis->id, 'name' => 'Sam Editor', 'position' => 1]);
+        $this->assertDatabaseMissing('thesis_proofreaders', ['thesis_id' => $thesis->id, 'name' => '']);
+    }
+
+    public function test_thesis_can_have_a_single_proofreader(): void
+    {
+        $a = Department::factory()->create();
+
+        $this->actingAs($this->departmentUser($a))
+            ->post(route('department.theses.store'), [
+                'status' => 'published',
+                'title' => 'One Proofreader',
+                'year' => 2024,
+                'program' => 'BS Computer Science',
+                'abstract' => 'A short abstract.',
+                'proofreaders' => ['Solo Reader'],
+            ])
+            ->assertRedirect(route('department.theses.index'));
+
+        $thesis = Thesis::where('title', 'One Proofreader')->firstOrFail();
+        $this->assertSame(['Solo Reader'], $thesis->proofreaders()->pluck('name')->all());
+    }
+
+    public function test_thesis_can_be_created_with_no_proofreaders(): void
+    {
+        $a = Department::factory()->create();
+
+        $this->actingAs($this->departmentUser($a))
+            ->post(route('department.theses.store'), [
+                'status' => 'published',
+                'title' => 'No Proofreaders',
+                'year' => 2024,
+                'program' => 'BS Computer Science',
+                'abstract' => 'A short abstract.',
+                // proofreaders omitted entirely — optional field.
+            ])
+            ->assertRedirect(route('department.theses.index'));
+
+        $thesis = Thesis::where('title', 'No Proofreaders')->firstOrFail();
+        $this->assertSame(0, $thesis->proofreaders()->count());
+    }
+
+    public function test_updating_a_thesis_replaces_its_proofreaders(): void
+    {
+        $a = Department::factory()->create();
+        $thesis = $this->thesisFor($a);
+        $thesis->proofreaders()->create(['name' => 'Old Reader', 'position' => 0]);
+
+        $this->actingAs($this->departmentUser($a))
+            ->put(route('department.theses.update', $thesis), [
+                'status' => 'published',
+                'title' => $thesis->title,
+                'year' => $thesis->year,
+                'program' => $thesis->program,
+                'abstract' => $thesis->abstract,
+                'proofreaders' => ['New Reader One', 'New Reader Two'],
+            ])
+            ->assertRedirect(route('department.theses.index'));
+
+        $this->assertSame(['New Reader One', 'New Reader Two'], $thesis->proofreaders()->pluck('name')->all());
+        $this->assertDatabaseMissing('thesis_proofreaders', ['thesis_id' => $thesis->id, 'name' => 'Old Reader']);
+    }
+
+    public function test_deleting_a_thesis_deletes_its_proofreaders(): void
+    {
+        $a = Department::factory()->create();
+        $thesis = $this->thesisFor($a);
+        $thesis->proofreaders()->create(['name' => 'Reader To Remove', 'position' => 0]);
+
+        $this->actingAs($this->departmentUser($a))
+            ->delete(route('department.theses.destroy', $thesis))
+            ->assertRedirect(route('department.theses.index'));
+
+        $this->assertDatabaseMissing('theses', ['id' => $thesis->id]);
+        $this->assertDatabaseMissing('thesis_proofreaders', ['thesis_id' => $thesis->id]);
+    }
+
     public function test_store_validates_required_fields(): void
     {
         $a = Department::factory()->create();

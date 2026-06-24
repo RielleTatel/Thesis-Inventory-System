@@ -38,7 +38,7 @@ class PublicThesisController extends Controller
     {
         abort_if(! $thesis->isPublished(), 404);
 
-        $thesis->load(['department', 'authors', 'advisers', 'panelists', 'keywords']);
+        $thesis->load(['department', 'authors', 'advisers', 'panelists', 'proofreaders', 'keywords']);
 
         return view('public.thesis.show', ['thesis' => $thesis]);
     }

@@ -79,7 +79,8 @@ class ThesisSeeder extends Seeder
             'status' => 'published',
         ]);
 
-        foreach (['authors', 'advisers', 'panelists', 'keywords'] as $relation) {
+        // proofreaders is optional: a record may omit it (missing/empty = none).
+        foreach (['authors', 'advisers', 'panelists', 'proofreaders', 'keywords'] as $relation) {
             $this->attachOrdered($thesis, $relation, $this->stringList($record[$relation] ?? []));
         }
 

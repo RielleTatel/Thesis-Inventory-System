@@ -66,7 +66,7 @@ class ThesisController extends Controller
     {
         $this->authorize('update', $thesis);
 
-        $thesis->load(['authors', 'advisers', 'panelists', 'keywords']);
+        $thesis->load(['authors', 'advisers', 'panelists', 'proofreaders', 'keywords']);
 
         return view('user.thesis.edit', ['thesis' => $thesis]);
     }
